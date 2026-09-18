@@ -3,6 +3,8 @@ import { db } from '@/server/db';
 import { formatZodError, handleAuthError, requireSession } from '@/server/session';
 import { cambiarEstadoCitaSchema } from '@/schemas';
 import { validarTransicionEstado } from '@/domain/estadosCita';
+import { calcularConsumo, calcularFechaRetoque } from '@/domain/inventario';
+import { Cita, Servicio } from '@/types';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -90,7 +92,51 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       );
     }
 
-    const actualizada = db.citas.update(id, { estado: nuevoEstado });
+    const camposActualizar: Partial<Cita> = { estado: nuevoEstado };
+
+    // Efectos colaterales según la transición (RN-03 / RN-04)
+    if (nuevoEstado === 'completada') {
+      // 1. Obtener la definición completa de cada servicio de la cita desde el catálogo
+      const serviciosCompletos = cita.servicios
+        .map((s) => db.servicios.findById(s.servicioId))
+        .filter((s): s is Servicio => Boolean(s));
+
+      // 2. Calcular consumos consolidados de insumos
+      const consumos = calcularConsumo(serviciosCompletos);
+
+      // 3. Descontar existencias en el inventario garantizando que no queden negativas
+      for (const consumo of consumos) {
+        const insumo = db.insumos.findById(consumo.insumoId);
+        if (insumo) {
+          const nuevaExistencia = Math.max(
+            0,
+            Number((insumo.existencia - consumo.cantidad).toFixed(2))
+          );
+          db.insumos.update(insumo.id, { existencia: nuevaExistencia });
+        }
+      }
+
+      // 4. Calcular fecha estimada de retoque
+      const fechaRetoque = calcularFechaRetoque(cita.inicio, serviciosCompletos);
+
+      // 5. Asignar los campos correspondientes a la cita
+      camposActualizar.insumosDescontados = consumos;
+      camposActualizar.montoCobrado = cita.montoCobrado ?? cita.montoTotal;
+      if (fechaRetoque) {
+        camposActualizar.fechaRetoque = fechaRetoque;
+      }
+    } else if (nuevoEstado === 'inasistencia') {
+      // Incrementar el contador de inasistencias de la clienta
+      const clienta = db.usuarias.findById(cita.clientaId);
+      if (clienta) {
+        const inasistenciasActualizadas = (clienta.inasistencias || 0) + 1;
+        db.usuarias.update(clienta.id, {
+          inasistencias: inasistenciasActualizadas,
+        });
+      }
+    }
+
+    const actualizada = db.citas.update(id, camposActualizar);
     return NextResponse.json(actualizada, { status: 200 });
   } catch (error) {
     const authResponse = handleAuthError(error);

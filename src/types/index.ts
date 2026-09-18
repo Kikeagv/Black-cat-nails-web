@@ -73,6 +73,7 @@ export interface Insumo {
   existencia: number;
   minimo: number;
   costo: number;              // USD por unidad
+  estado?: EstadoInsumo;
 }
 
 export type EstadoInsumo = 'ok' | 'bajo' | 'critico';

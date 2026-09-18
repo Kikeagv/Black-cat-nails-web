@@ -242,8 +242,8 @@ export async function requireSession(req?: Request | NextRequest): Promise<Usuar
  * Si no hay sesión válida, lanza 401.
  * Si el rol de la usuaria no coincide, lanza 403.
  */
-export async function requireRol(rol: Rol | Rol[]): Promise<Usuaria> {
-  const usuaria = await requireSession();
+export async function requireRol(rol: Rol | Rol[], req?: Request | NextRequest): Promise<Usuaria> {
+  const usuaria = await requireSession(req);
   const rolesPermitidos = Array.isArray(rol) ? rol : [rol];
 
   if (!rolesPermitidos.includes(usuaria.rol)) {

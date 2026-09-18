@@ -1,33 +1,41 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Calendar, Plus } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ClientaAppPage() {
-  const { usuaria, cargando, logout } = useAuth();
-
-  if (cargando) {
-    return (
-      <main className="min-h-screen bg-[var(--bg-base)] text-white p-8 flex items-center justify-center">
-        <p className="text-sm text-white/60">Cargando catálogo...</p>
-      </main>
-    );
-  }
+  const { usuaria } = useAuth();
 
   return (
-    <main className="min-h-screen bg-[var(--bg-base)] text-white p-8 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h1 className="text-display-32 font-serif">¡Hola, {usuaria?.nombre || 'Clienta'}!</h1>
-          <p className="text-sm text-[var(--accent)]">Bienvenida a tu panel de reservas</p>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => logout()}>
-          Cerrar sesión
-        </Button>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-display-32 font-serif text-white">
+          ¡Hola, {usuaria?.nombre?.split(' ')[0] || 'Clienta'}!
+        </h1>
+        <p className="text-sm text-[var(--accent)]">
+          ¿Qué diseño creamos hoy?
+        </p>
       </div>
-      <p className="text-sm text-white/80">
-        Panel de clienta listo. (El catálogo completo y agendamiento se desplegarán en los tickets BCN-16 y BCN-21).
-      </p>
-    </main>
+
+      {/* Acceso rápido a agendar */}
+      <Card variant="surface" className="p-5 rounded-[16px] space-y-4">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/90">
+          <Calendar className="size-4" />
+          <span>Autogestión de citas</span>
+        </div>
+        <p className="text-sm text-white/90">
+          Agendá tu cita en 3 simples pasos con cálculo automático de disponibilidad horaria.
+        </p>
+        <Link href="/app/agendar" className="block pt-2">
+          <Button size="xl" className="w-full gap-2">
+            <Plus className="size-5" />
+            Agendar nueva cita
+          </Button>
+        </Link>
+      </Card>
+    </div>
   );
 }

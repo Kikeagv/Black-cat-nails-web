@@ -1,35 +1,30 @@
 'use client';
 
+import { Card } from '@/components/ui/card';
+import { LayoutDashboard } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
 
 export default function AdminDashboardPage() {
-  const { usuaria, cargando, logout } = useAuth();
-
-  if (cargando) {
-    return (
-      <main className="min-h-screen bg-[var(--bg-base)] text-white p-8 flex items-center justify-center">
-        <p className="text-sm text-white/60">Cargando panel administrativo...</p>
-      </main>
-    );
-  }
+  const { usuaria } = useAuth();
 
   return (
-    <main className="min-h-screen bg-[var(--bg-base)] text-white p-8 max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h1 className="text-display-32 font-serif">Panel de Control</h1>
-          <p className="text-sm text-[var(--accent)]">
-            Sesión activa como Administradora: {usuaria?.nombre}
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => logout()}>
-          Cerrar sesión
-        </Button>
+    <div className="space-y-6 max-w-6xl">
+      <div className="space-y-1">
+        <h1 className="text-display-32 font-serif text-white">Dashboard</h1>
+        <p className="text-sm text-[var(--accent)]">
+          Bienvenida, {usuaria?.nombre || 'Administradora'}. Resumen del negocio y operaciones de hoy.
+        </p>
       </div>
-      <p className="text-sm text-white/80">
-        Panel administrativo listo. (Los layouts y dashboard se desplegarán en los tickets BCN-12 y BCN-27).
-      </p>
-    </main>
+
+      <Card className="p-6 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-4">
+        <div className="flex items-center gap-3 text-[var(--primary)]">
+          <LayoutDashboard className="size-6" />
+          <h2 className="text-lg font-semibold text-white">Panel principal con métricas en tiempo real</h2>
+        </div>
+        <p className="text-sm text-white/80">
+          Los KPIs de citas de hoy, ingresos del mes, clientas activas, alertas y gráficas semanales se integrarán en el ticket BCN-27 sobre el endpoint BCN-26.
+        </p>
+      </Card>
+    </div>
   );
 }

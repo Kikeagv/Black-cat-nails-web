@@ -1,15 +1,6 @@
 import { HORARIO, PREPARACION_MIN, PASO_BLOQUE_MIN, HorarioSemanal } from '@/config';
 import { EstadoCita, HorarioDisponible, Intervalo } from '@/types';
-
-/**
- * Estados de cita que ocupan espacio en la agenda.
- * Las citas en estado 'cancelada' o 'inasistencia' liberan el horario.
- */
-const ESTADOS_OCUPAN_AGENDA: ReadonlySet<EstadoCita> = new Set<EstadoCita>([
-  'solicitada',
-  'confirmada',
-  'en_curso',
-]);
+import { ESTADOS_OCUPAN_AGENDA } from './estadosCita';
 
 /**
  * Suma las duraciones de los servicios seleccionados y añade el tiempo de preparación.

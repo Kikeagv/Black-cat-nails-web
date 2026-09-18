@@ -10,7 +10,7 @@
 import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/server/db';
 import { Rol, Usuaria, UsuariaConHash } from '@/types';
@@ -152,10 +152,29 @@ export async function clearSessionCookie(): Promise<void> {
  * Obtiene la usuaria autenticada actual a partir de la cookie de sesión y el repositorio en memoria.
  * Retorna la usuaria sin el campo sensible passwordHash, o null si no hay sesión válida.
  */
-export async function getSession(): Promise<Usuaria | null> {
+export async function getSession(req?: Request | NextRequest): Promise<Usuaria | null> {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    let token: string | undefined;
+
+    try {
+      const cookieStore = await cookies();
+      token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    } catch {
+      // Si cookies() falla al invocarse fuera de un RequestAsyncStorage
+    }
+
+    if (!token && req) {
+      const cookieHeader = req.headers.get('cookie');
+      if (cookieHeader) {
+        const match = cookieHeader.match(
+          new RegExp(`(?:^|;\\s*)${SESSION_COOKIE_NAME}=([^;]*)`)
+        );
+        if (match) {
+          token = decodeURIComponent(match[1]);
+        }
+      }
+    }
+
     if (!token) {
       return null;
     }
@@ -206,8 +225,8 @@ export class AuthError extends Error {
 /**
  * Exige una sesión activa. Si no existe sesión válida, lanza AuthError con código 401.
  */
-export async function requireSession(): Promise<Usuaria> {
-  const usuaria = await getSession();
+export async function requireSession(req?: Request | NextRequest): Promise<Usuaria> {
+  const usuaria = await getSession(req);
   if (!usuaria) {
     throw new AuthError(
       401,

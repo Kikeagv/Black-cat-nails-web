@@ -2,63 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db';
 import { formatZodError, handleAuthError, requireSession } from '@/server/session';
 import { cambiarEstadoCitaSchema } from '@/schemas';
-import { CANCELACION_MIN_HORAS } from '@/config';
-import { EstadoCita, Rol } from '@/types';
+import { validarTransicionEstado } from '@/domain/estadosCita';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-const TRANSICIONES: Record<EstadoCita, EstadoCita[]> = {
-  solicitada: ['confirmada', 'cancelada', 'inasistencia'],
-  confirmada: ['en_curso', 'cancelada', 'inasistencia'],
-  en_curso: ['completada'],
-  completada: [],
-  cancelada: [],
-  inasistencia: [],
-};
-
-function puedeTransicionar(
-  desde: EstadoCita,
-  hacia: EstadoCita,
-  rol: Rol
-): { permitida: boolean; motivo?: string } {
-  const permitidas = TRANSICIONES[desde] || [];
-  if (!permitidas.includes(hacia)) {
-    return {
-      permitida: false,
-      motivo: `No se puede pasar de "${desde}" a "${hacia}"`,
-    };
-  }
-
-  if (rol === 'clienta') {
-    if (
-      hacia === 'en_curso' ||
-      hacia === 'completada' ||
-      hacia === 'inasistencia'
-    ) {
-      return {
-        permitida: false,
-        motivo: 'Solo la administradora puede realizar esta acción',
-      };
-    }
-  }
-
-  return { permitida: true };
-}
-
 /**
  * PATCH /api/citas/[id]/estado (Autenticada)
  *
- * Cambia el estado de una cita validando transiciones permitidas según el rol:
+ * Cambia el estado de una cita validando transiciones permitidas según el rol y máquina de estados (RN-02):
  * - 200: Cita actualizada
- * - 403: Intento de transición restringida a admin
+ * - 400: Validación fallida del cuerpo
+ * - 401: Sin sesión
+ * - 403: Intento de transición restringida a admin o acceso a cita ajena
  * - 404: Cita inexistente
  * - 422: Transición inválida en la máquina de estados o cancelación fuera de tiempo
  */
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
-    const usuaria = await requireSession();
+    const usuaria = await requireSession(request);
     const { id } = await context.params;
 
     const body = await request.json().catch(() => null);
@@ -107,36 +70,24 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       );
     }
 
-    // Validar máquina de estados y permisos por rol
-    const validacion = puedeTransicionar(cita.estado, nuevoEstado, usuaria.rol);
-    if (!validacion.permitida) {
-      const status = validacion.motivo?.includes('administradora') ? 403 : 422;
+    // Validar máquina de estados, permisos por rol y anticipación mínima
+    const validacion = validarTransicionEstado(
+      cita.estado,
+      nuevoEstado,
+      usuaria.rol,
+      cita.inicio
+    );
+
+    if (!validacion.valida) {
       return NextResponse.json(
         {
           error: {
-            code: status === 403 ? 'permiso_insuficiente' : 'transicion_invalida',
-            message: validacion.motivo,
+            code: validacion.codigo ?? 'transicion_invalida',
+            message: validacion.mensaje ?? 'Transición no permitida',
           },
         },
-        { status }
+        { status: validacion.status ?? 422 }
       );
-    }
-
-    // Si la clienta cancela, validar anticipación mínima de 12 horas
-    if (usuaria.rol === 'clienta' && nuevoEstado === 'cancelada') {
-      const inicioMs = Date.parse(cita.inicio);
-      const horasAnticipacion = (inicioMs - Date.now()) / (1000 * 60 * 60);
-      if (horasAnticipacion < CANCELACION_MIN_HORAS) {
-        return NextResponse.json(
-          {
-            error: {
-              code: 'cancelacion_tardia',
-              message: `Las cancelaciones deben realizarse con al menos ${CANCELACION_MIN_HORAS} horas de anticipación`,
-            },
-          },
-          { status: 422 }
-        );
-      }
     }
 
     const actualizada = db.citas.update(id, { estado: nuevoEstado });

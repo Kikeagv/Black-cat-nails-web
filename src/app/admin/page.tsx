@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar as CalendarIcon, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Calendar as CalendarIcon, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { dashboardService } from '@/services/dashboardService';
 import { DashboardData } from '@/types';
@@ -11,7 +11,6 @@ import {
   IngresosChart,
   AgendaHoySection,
   AlertasSection,
-  DashboardSkeleton,
 } from '@/components/admin/dashboard';
 
 /**
@@ -80,8 +79,10 @@ export default function AdminDashboardPage() {
     }
   }, []);
 
+  // Carga inicial y reactiva ante cambios en la fecha
   useEffect(() => {
     let activo = true;
+
     dashboardService
       .obtenerDatos(fechaReferencia)
       .then((res) => {
@@ -106,6 +107,22 @@ export default function AdminDashboardPage() {
       activo = false;
     };
   }, [fechaReferencia]);
+
+  // Recarga automática al enfocar la ventana o cambiar de pestaña (criterio: completar cita y volver)
+  useEffect(() => {
+    const handleFocus = () => {
+      cargarDashboard(fechaReferencia);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [cargarDashboard, fechaReferencia]);
+
+  const handleReintentar = () => {
+    cargarDashboard(fechaReferencia);
+  };
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-10">
@@ -143,7 +160,7 @@ export default function AdminDashboardPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => cargarDashboard(fechaReferencia)}
+            onClick={handleReintentar}
             disabled={cargando}
             className="rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-white gap-1.5 text-xs h-9 px-3"
             title="Actualizar datos"
@@ -154,48 +171,44 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* 2. Estados de Carga, Error o Contenido (RNF-03) */}
-      {cargando && !datos ? (
-        <DashboardSkeleton />
-      ) : error ? (
-        <div className="rounded-[16px] border border-red-500/30 bg-red-500/10 p-8 text-center space-y-4 max-w-xl mx-auto my-12">
-          <div className="size-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center mx-auto">
-            <AlertTriangle className="size-6" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-serif text-lg font-bold text-white">
-              Error al cargar el dashboard
-            </h3>
-            <p className="text-sm text-red-200/80">{error}</p>
-          </div>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => cargarDashboard(fechaReferencia)}
-            className="rounded-xl px-5"
-          >
-            Reintentar
-          </Button>
-        </div>
-      ) : datos ? (
-        <div className="space-y-8">
-          {/* Tarjetas KPI de RN-05 */}
-          <KpiCards indicadores={datos.indicadores} />
+      {/* 2. Bloques modulares con esqueletos de carga y mensaje de error por bloque */}
+      <div className="space-y-8">
+        {/* Bloque 1: Cuatro tarjetas KPI de RN-05 */}
+        <KpiCards
+          indicadores={datos?.indicadores}
+          cargando={cargando && !datos}
+          error={error}
+          onReintentar={handleReintentar}
+        />
 
-          {/* Gráfica de ingresos de las últimas 6 semanas */}
-          <IngresosChart datos={datos.ingresosPorSemana} />
+        {/* Bloque 2: Gráfica de ingresos por semana con componente chart de shadcn */}
+        <IngresosChart
+          datos={datos?.ingresosPorSemana}
+          cargando={cargando && !datos}
+          error={error}
+          onReintentar={handleReintentar}
+        />
 
-          {/* Grilla: Agenda de hoy (60%) y Alertas operativas (40%) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <div className="lg:col-span-7 xl:col-span-8">
-              <AgendaHoySection citas={datos.agendaHoy} />
-            </div>
-            <div className="lg:col-span-5 xl:col-span-4">
-              <AlertasSection alertas={datos.alertas} />
-            </div>
+        {/* Bloque 3: Grilla de Agenda del día (60%) y Panel de alertas (40%) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-7 xl:col-span-8">
+            <AgendaHoySection
+              citas={datos?.agendaHoy}
+              cargando={cargando && !datos}
+              error={error}
+              onReintentar={handleReintentar}
+            />
+          </div>
+          <div className="lg:col-span-5 xl:col-span-4">
+            <AlertasSection
+              alertas={datos?.alertas}
+              cargando={cargando && !datos}
+              error={error}
+              onReintentar={handleReintentar}
+            />
           </div>
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

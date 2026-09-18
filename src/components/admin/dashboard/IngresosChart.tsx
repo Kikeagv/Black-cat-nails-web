@@ -2,25 +2,45 @@
 
 import React from 'react';
 import {
-  ResponsiveContainer,
   AreaChart,
   Area,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
 } from 'recharts';
-import { TrendingUp, DollarSign } from 'lucide-react';
+import { TrendingUp, DollarSign, AlertCircle, RefreshCw } from 'lucide-react';
 import { IngresoSemanal } from '@/types';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart';
+import { Button } from '@/components/ui/button';
 
 interface IngresosChartProps {
-  datos: IngresoSemanal[];
+  datos?: IngresoSemanal[];
+  cargando?: boolean;
+  error?: string | null;
+  onReintentar?: () => void;
 }
 
-export function IngresosChart({ datos }: IngresosChartProps) {
+const chartConfig = {
+  ingresos: {
+    label: 'Ingresos',
+    color: '#e477c1',
+  },
+} satisfies ChartConfig;
+
+export function IngresosChart({
+  datos = [],
+  cargando = false,
+  error = null,
+  onReintentar,
+}: IngresosChartProps) {
   const totalPeriodo = datos.reduce((acc, curr) => acc + curr.ingresos, 0);
 
-  // Formateador de moneda en dólares
+  // Formateador de moneda en dólares para el eje Y
   const formatearDolares = (valor: number) => `$${valor.toFixed(0)}`;
 
   return (
@@ -41,101 +61,124 @@ export function IngresosChart({ datos }: IngresosChartProps) {
           </p>
         </div>
 
-        {/* Resumen total */}
-        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl self-start sm:self-auto">
-          <div className="size-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-            <DollarSign className="size-4" />
+        {/* Resumen total (solo si hay datos y no está cargando) */}
+        {!cargando && !error && (
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl self-start sm:self-auto">
+            <div className="size-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <DollarSign className="size-4" />
+            </div>
+            <div>
+              <span className="text-[11px] uppercase tracking-wider text-white/50 block font-medium">
+                Total 6 semanas
+              </span>
+              <span className="font-serif font-bold text-base text-emerald-400">
+                ${totalPeriodo.toFixed(2)}
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="text-[11px] uppercase tracking-wider text-white/50 block font-medium">
-              Total 6 semanas
-            </span>
-            <span className="font-serif font-bold text-base text-emerald-400">
-              ${totalPeriodo.toFixed(2)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Contenedor Recharts */}
-      <div className="h-[280px] w-full pt-2">
-        {datos.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6 text-white/50 space-y-2">
-            <TrendingUp className="size-8 text-white/30" />
-            <p className="text-sm">No hay registros de ingresos para este período.</p>
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={datos}
-              margin={{ top: 10, right: 15, left: -10, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#b5446e" stopOpacity={0.6} />
-                  <stop offset="95%" stopColor="#b5446e" stopOpacity={0.0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="rgba(255, 255, 255, 0.08)"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="semana"
-                stroke="rgba(255, 255, 255, 0.4)"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                dy={8}
-              />
-              <YAxis
-                stroke="rgba(255, 255, 255, 0.4)"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={formatearDolares}
-                dx={-4}
-              />
-              <Tooltip
-                content={({ active, payload, label }) => {
-                  if (active && payload && payload.length) {
-                    const ingreso = payload[0].value as number;
-                    return (
-                      <div className="bg-[#1A1209] border border-white/20 rounded-xl p-3 shadow-xl backdrop-blur">
-                        <p className="text-xs text-white/60 font-medium mb-1">
-                          Semana: <span className="text-white font-semibold">{label}</span>
-                        </p>
-                        <p className="text-sm font-bold text-[var(--petal-pink)] flex items-center gap-1">
-                          <span>Ingresos:</span>
-                          <span className="font-serif text-base text-white">
-                            ${ingreso.toFixed(2)}
-                          </span>
-                        </p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="ingresos"
-                stroke="#e477c1"
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#colorIngresos)"
-                activeDot={{
-                  r: 6,
-                  fill: '#e477c1',
-                  stroke: '#ffffff',
-                  strokeWidth: 2,
-                }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
         )}
       </div>
+
+      {/* Cuerpo: Esqueleto de carga, Error por bloque o Gráfica con shadcn */}
+      {cargando ? (
+        <div className="h-[280px] w-full bg-white/5 rounded-xl flex items-end justify-between p-6 gap-3 animate-pulse" aria-label="Cargando gráfica de ingresos...">
+          {[35, 60, 45, 80, 55, 90].map((heightPct, idx) => (
+            <div
+              key={idx}
+              className="w-12 bg-white/10 rounded-t-md"
+              style={{ height: `${heightPct}%` }}
+            />
+          ))}
+        </div>
+      ) : error ? (
+        <div className="h-[280px] w-full rounded-xl border border-red-500/20 bg-red-500/5 flex flex-col items-center justify-center text-center p-6 space-y-3">
+          <AlertCircle className="size-8 text-red-400" />
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-white">Error al cargar la gráfica</p>
+            <p className="text-xs text-red-200/70 max-w-sm">{error}</p>
+          </div>
+          {onReintentar && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onReintentar}
+              className="rounded-xl border-white/10 text-xs gap-1.5 h-8 px-3"
+            >
+              <RefreshCw className="size-3" />
+              <span>Reintentar</span>
+            </Button>
+          )}
+        </div>
+      ) : datos.length === 0 ? (
+        <div className="h-[280px] w-full flex flex-col items-center justify-center text-center p-6 text-white/50 space-y-2">
+          <TrendingUp className="size-8 text-white/30" />
+          <p className="text-sm">No hay registros de ingresos para este período.</p>
+        </div>
+      ) : (
+        <ChartContainer config={chartConfig} className="h-[280px] w-full aspect-auto">
+          <AreaChart
+            data={datos}
+            margin={{ top: 10, right: 15, left: -10, bottom: 0 }}
+          >
+            <defs>
+              <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#b5446e" stopOpacity={0.6} />
+                <stop offset="95%" stopColor="#b5446e" stopOpacity={0.0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(255, 255, 255, 0.08)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="semana"
+              stroke="rgba(255, 255, 255, 0.4)"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+              dy={8}
+            />
+            <YAxis
+              stroke="rgba(255, 255, 255, 0.4)"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={formatearDolares}
+              dx={-4}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  labelFormatter={(label) => `Semana: ${label}`}
+                  formatter={(value) => (
+                    <div className="flex items-center justify-between gap-3 w-full">
+                      <span className="text-white/70">Ingresos</span>
+                      <span className="font-serif font-bold text-white">
+                        ${Number(value).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                />
+              }
+            />
+            <Area
+              type="monotone"
+              dataKey="ingresos"
+              stroke="#e477c1"
+              strokeWidth={3}
+              fillOpacity={1}
+              fill="url(#colorIngresos)"
+              activeDot={{
+                r: 6,
+                fill: '#e477c1',
+                stroke: '#ffffff',
+                strokeWidth: 2,
+              }}
+            />
+          </AreaChart>
+        </ChartContainer>
+      )}
     </div>
   );
 }

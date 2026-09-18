@@ -3,6 +3,9 @@ import { db } from '@/server/db';
 import { handleAuthError, requireRol } from '@/server/session';
 import { calcularDashboard } from '@/domain/indicadores';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * GET /api/dashboard (Exclusivo Admin)
  * Retorna las métricas consolidadas del panel de administración:
@@ -33,7 +36,14 @@ export async function GET(request?: NextRequest) {
       fechaReferencia
     );
 
-    return NextResponse.json(dashboardData, { status: 200 });
+    return NextResponse.json(dashboardData, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
   } catch (error) {
     const authResponse = handleAuthError(error);
     if (authResponse) {

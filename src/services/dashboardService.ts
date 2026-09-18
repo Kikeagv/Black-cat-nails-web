@@ -9,8 +9,17 @@ export const dashboardService = {
    * Obtiene las métricas consolidadas, agenda de hoy, alertas y series históricas.
    */
   obtenerDatos: async (fecha?: string): Promise<DashboardData> => {
-    const url = fecha ? `/api/dashboard?fecha=${encodeURIComponent(fecha)}` : '/api/dashboard';
-    return http.get<DashboardData>(url);
+    const params = new URLSearchParams();
+    if (fecha) params.set('fecha', fecha);
+    params.set('_t', Date.now().toString());
+    const url = `/api/dashboard?${params.toString()}`;
+    return http.get<DashboardData>(url, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
+    });
   },
 };
 

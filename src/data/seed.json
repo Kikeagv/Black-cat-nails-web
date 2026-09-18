@@ -1,0 +1,730 @@
+{
+  "usuarias": [
+    {
+      "id": "usr_admin",
+      "nombre": "Valeria Vante",
+      "correo": "vante@blackcatnails.sv",
+      "telefono": "78901234",
+      "rol": "admin",
+      "inasistencias": 0,
+      "notasPrivadas": "Propietaria y administradora del salón",
+      "creadaEn": "2026-08-01T08:00:00-06:00",
+      "passwordHash": "$2b$10$IW.QAPaAyEtAjp5ovFSzA.NkAGULYaOwYLM5vxrBnjIs5g8VJ8OK2"
+    },
+    {
+      "id": "usr_1",
+      "nombre": "Camila Pérez",
+      "correo": "camila@mail.com",
+      "telefono": "70001234",
+      "rol": "clienta",
+      "inasistencias": 2,
+      "notasPrivadas": "Tiene 2 inasistencias registradas. Requiere confirmación obligatoria previa.",
+      "creadaEn": "2026-08-10T10:00:00-06:00",
+      "passwordHash": "$2b$10$IW.QAPaAyEtAjp5ovFSzA.NkAGULYaOwYLM5vxrBnjIs5g8VJ8OK2"
+    },
+    {
+      "id": "usr_2",
+      "nombre": "Sofía Rodríguez",
+      "correo": "sofia@mail.com",
+      "telefono": "71112233",
+      "rol": "clienta",
+      "inasistencias": 1,
+      "notasPrivadas": "Clienta habitual de manicura semipermanente.",
+      "creadaEn": "2026-08-12T11:30:00-06:00",
+      "passwordHash": "$2b$10$IW.QAPaAyEtAjp5ovFSzA.NkAGULYaOwYLM5vxrBnjIs5g8VJ8OK2"
+    },
+    {
+      "id": "usr_3",
+      "nombre": "Valeria Gómez",
+      "correo": "valeria@mail.com",
+      "telefono": "72223344",
+      "rol": "clienta",
+      "inasistencias": 0,
+      "notasPrivadas": "Prefiere estilos almendrados y nail art en tonos pastel.",
+      "creadaEn": "2026-08-15T09:15:00-06:00",
+      "passwordHash": "$2b$10$IW.QAPaAyEtAjp5ovFSzA.NkAGULYaOwYLM5vxrBnjIs5g8VJ8OK2"
+    },
+    {
+      "id": "usr_4",
+      "nombre": "Mariana López",
+      "correo": "mariana@mail.com",
+      "telefono": "73334455",
+      "rol": "clienta",
+      "inasistencias": 0,
+      "notasPrivadas": "Puntual, solicita pedicura spa cada 30 días.",
+      "creadaEn": "2026-08-18T14:00:00-06:00",
+      "passwordHash": "$2b$10$IW.QAPaAyEtAjp5ovFSzA.NkAGULYaOwYLM5vxrBnjIs5g8VJ8OK2"
+    },
+    {
+      "id": "usr_5",
+      "nombre": "Elena Castro",
+      "correo": "elena@mail.com",
+      "telefono": "74445566",
+      "rol": "clienta",
+      "inasistencias": 0,
+      "notasPrivadas": "Prefiere uñas esculpidas en acrílico largo.",
+      "creadaEn": "2026-08-20T16:20:00-06:00",
+      "passwordHash": "$2b$10$IW.QAPaAyEtAjp5ovFSzA.NkAGULYaOwYLM5vxrBnjIs5g8VJ8OK2"
+    }
+  ],
+  "servicios": [
+    {
+      "id": "srv_1",
+      "nombre": "Manicura clásica",
+      "categoria": "Manicura",
+      "precio": 15,
+      "duracionMin": 45,
+      "cicloRetornoDias": 30,
+      "activo": true,
+      "imagenUrl": "/images/servicios/manicura-clasica.jpg",
+      "consumos": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ]
+    },
+    {
+      "id": "srv_2",
+      "nombre": "Manicura semipermanente",
+      "categoria": "Manicura",
+      "precio": 20,
+      "duracionMin": 60,
+      "cicloRetornoDias": 21,
+      "activo": true,
+      "imagenUrl": "/images/servicios/manicura-semipermanente.jpg",
+      "consumos": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 8
+        },
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ]
+    },
+    {
+      "id": "srv_3",
+      "nombre": "Uñas esculpidas",
+      "categoria": "Acrílico",
+      "precio": 35,
+      "duracionMin": 90,
+      "cicloRetornoDias": 25,
+      "activo": true,
+      "imagenUrl": "/images/servicios/unas-esculpidas.jpg",
+      "consumos": [
+        {
+          "insumoId": "ins_1",
+          "cantidad": 20
+        },
+        {
+          "insumoId": "ins_3",
+          "cantidad": 10
+        }
+      ]
+    },
+    {
+      "id": "srv_4",
+      "nombre": "Diseño artístico",
+      "categoria": "Nail art",
+      "precio": 18,
+      "duracionMin": 30,
+      "cicloRetornoDias": 25,
+      "activo": true,
+      "imagenUrl": "/images/servicios/diseno-artistico.jpg",
+      "consumos": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 4
+        }
+      ]
+    },
+    {
+      "id": "srv_5",
+      "nombre": "Pedicura spa",
+      "categoria": "Pedicura",
+      "precio": 20,
+      "duracionMin": 60,
+      "cicloRetornoDias": 30,
+      "activo": true,
+      "imagenUrl": "/images/servicios/pedicura-spa.jpg",
+      "consumos": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 10
+        }
+      ]
+    },
+    {
+      "id": "srv_6",
+      "nombre": "Retiro de uñas",
+      "categoria": "Acrílico",
+      "precio": 10,
+      "duracionMin": 20,
+      "cicloRetornoDias": 0,
+      "activo": true,
+      "imagenUrl": "/images/servicios/retiro-unas.jpg",
+      "consumos": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 20
+        }
+      ]
+    }
+  ],
+  "insumos": [
+    {
+      "id": "ins_1",
+      "nombre": "Acrílico en polvo",
+      "unidad": "g",
+      "existencia": 450,
+      "minimo": 200,
+      "costo": 0.08
+    },
+    {
+      "id": "ins_2",
+      "nombre": "Removedor de uñas",
+      "unidad": "ml",
+      "existencia": 40,
+      "minimo": 100,
+      "costo": 0.05
+    },
+    {
+      "id": "ins_3",
+      "nombre": "Tips para uñas",
+      "unidad": "unidad",
+      "existencia": 180,
+      "minimo": 100,
+      "costo": 0.1
+    },
+    {
+      "id": "ins_4",
+      "nombre": "Gel constructor",
+      "unidad": "g",
+      "existencia": 250,
+      "minimo": 100,
+      "costo": 0.15
+    },
+    {
+      "id": "ins_5",
+      "nombre": "Esmalte semipermanente",
+      "unidad": "ml",
+      "existencia": 120,
+      "minimo": 100,
+      "costo": 0.2
+    }
+  ],
+  "citas": [
+    {
+      "id": "cit_01",
+      "clientaId": "usr_1",
+      "servicios": [
+        {
+          "servicioId": "srv_1",
+          "nombre": "Manicura clásica",
+          "precio": 15,
+          "duracionMin": 45
+        }
+      ],
+      "inicio": "2026-08-21T14:00:00-06:00",
+      "fin": "2026-08-21T15:00:00-06:00",
+      "duracionTotalMin": 60,
+      "montoTotal": 15,
+      "estado": "completada",
+      "montoCobrado": 15,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-09-20",
+      "creadaEn": "2026-08-18T10:00:00-06:00"
+    },
+    {
+      "id": "cit_02",
+      "clientaId": "usr_2",
+      "servicios": [
+        {
+          "servicioId": "srv_2",
+          "nombre": "Manicura semipermanente",
+          "precio": 20,
+          "duracionMin": 60
+        },
+        {
+          "servicioId": "srv_4",
+          "nombre": "Diseño artístico",
+          "precio": 18,
+          "duracionMin": 30
+        }
+      ],
+      "inicio": "2026-08-22T10:00:00-06:00",
+      "fin": "2026-08-22T11:45:00-06:00",
+      "duracionTotalMin": 105,
+      "montoTotal": 38,
+      "estado": "completada",
+      "montoCobrado": 38,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 12
+        },
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-09-16",
+      "creadaEn": "2026-08-19T14:20:00-06:00"
+    },
+    {
+      "id": "cit_03",
+      "clientaId": "usr_1",
+      "servicios": [
+        {
+          "servicioId": "srv_3",
+          "nombre": "Uñas esculpidas",
+          "precio": 35,
+          "duracionMin": 90
+        }
+      ],
+      "inicio": "2026-08-25T15:00:00-06:00",
+      "fin": "2026-08-25T16:45:00-06:00",
+      "duracionTotalMin": 105,
+      "montoTotal": 35,
+      "estado": "inasistencia",
+      "creadaEn": "2026-08-22T16:00:00-06:00"
+    },
+    {
+      "id": "cit_04",
+      "clientaId": "usr_3",
+      "servicios": [
+        {
+          "servicioId": "srv_5",
+          "nombre": "Pedicura spa",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-08-26T14:30:00-06:00",
+      "fin": "2026-08-26T15:45:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "completada",
+      "montoCobrado": 20,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 10
+        }
+      ],
+      "fechaRetoque": "2026-09-25",
+      "creadaEn": "2026-08-23T11:00:00-06:00"
+    },
+    {
+      "id": "cit_05",
+      "clientaId": "usr_5",
+      "servicios": [
+        {
+          "servicioId": "srv_1",
+          "nombre": "Manicura clásica",
+          "precio": 15,
+          "duracionMin": 45
+        }
+      ],
+      "inicio": "2026-08-28T16:00:00-06:00",
+      "fin": "2026-08-28T17:00:00-06:00",
+      "duracionTotalMin": 60,
+      "montoTotal": 15,
+      "estado": "cancelada",
+      "notas": "Cancelada con 24h de anticipación por viaje",
+      "creadaEn": "2026-08-24T09:30:00-06:00"
+    },
+    {
+      "id": "cit_06",
+      "clientaId": "usr_4",
+      "servicios": [
+        {
+          "servicioId": "srv_2",
+          "nombre": "Manicura semipermanente",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-08-29T11:00:00-06:00",
+      "fin": "2026-08-29T12:15:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "completada",
+      "montoCobrado": 20,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 8
+        },
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-09-19",
+      "creadaEn": "2026-08-26T15:00:00-06:00"
+    },
+    {
+      "id": "cit_07",
+      "clientaId": "usr_2",
+      "servicios": [
+        {
+          "servicioId": "srv_1",
+          "nombre": "Manicura clásica",
+          "precio": 15,
+          "duracionMin": 45
+        }
+      ],
+      "inicio": "2026-08-31T17:00:00-06:00",
+      "fin": "2026-08-31T18:00:00-06:00",
+      "duracionTotalMin": 60,
+      "montoTotal": 15,
+      "estado": "inasistencia",
+      "creadaEn": "2026-08-27T10:15:00-06:00"
+    },
+    {
+      "id": "cit_08",
+      "clientaId": "usr_5",
+      "servicios": [
+        {
+          "servicioId": "srv_3",
+          "nombre": "Uñas esculpidas",
+          "precio": 35,
+          "duracionMin": 90
+        },
+        {
+          "servicioId": "srv_4",
+          "nombre": "Diseño artístico",
+          "precio": 18,
+          "duracionMin": 30
+        }
+      ],
+      "inicio": "2026-09-02T15:00:00-06:00",
+      "fin": "2026-09-02T17:15:00-06:00",
+      "duracionTotalMin": 135,
+      "montoTotal": 53,
+      "estado": "completada",
+      "montoCobrado": 53,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_1",
+          "cantidad": 20
+        },
+        {
+          "insumoId": "ins_3",
+          "cantidad": 10
+        },
+        {
+          "insumoId": "ins_5",
+          "cantidad": 4
+        }
+      ],
+      "fechaRetoque": "2026-09-27",
+      "creadaEn": "2026-08-30T16:40:00-06:00"
+    },
+    {
+      "id": "cit_09",
+      "clientaId": "usr_3",
+      "servicios": [
+        {
+          "servicioId": "srv_6",
+          "nombre": "Retiro de uñas",
+          "precio": 10,
+          "duracionMin": 20
+        }
+      ],
+      "inicio": "2026-09-04T14:30:00-06:00",
+      "fin": "2026-09-04T15:05:00-06:00",
+      "duracionTotalMin": 35,
+      "montoTotal": 10,
+      "estado": "cancelada",
+      "notas": "Cancelada a solicitud de la clienta",
+      "creadaEn": "2026-09-01T12:00:00-06:00"
+    },
+    {
+      "id": "cit_10",
+      "clientaId": "usr_1",
+      "servicios": [
+        {
+          "servicioId": "srv_2",
+          "nombre": "Manicura semipermanente",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-05T09:30:00-06:00",
+      "fin": "2026-09-05T10:45:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "completada",
+      "montoCobrado": 20,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 8
+        },
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-09-26",
+      "creadaEn": "2026-09-02T18:00:00-06:00"
+    },
+    {
+      "id": "cit_11",
+      "clientaId": "usr_1",
+      "servicios": [
+        {
+          "servicioId": "srv_5",
+          "nombre": "Pedicura spa",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-08T16:00:00-06:00",
+      "fin": "2026-09-08T17:15:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "inasistencia",
+      "creadaEn": "2026-09-05T14:10:00-06:00"
+    },
+    {
+      "id": "cit_12",
+      "clientaId": "usr_2",
+      "servicios": [
+        {
+          "servicioId": "srv_6",
+          "nombre": "Retiro de uñas",
+          "precio": 10,
+          "duracionMin": 20
+        },
+        {
+          "servicioId": "srv_1",
+          "nombre": "Manicura clásica",
+          "precio": 15,
+          "duracionMin": 45
+        }
+      ],
+      "inicio": "2026-09-09T14:00:00-06:00",
+      "fin": "2026-09-09T15:20:00-06:00",
+      "duracionTotalMin": 80,
+      "montoTotal": 25,
+      "estado": "completada",
+      "montoCobrado": 25,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 25
+        }
+      ],
+      "fechaRetoque": "2026-10-09",
+      "creadaEn": "2026-09-06T11:20:00-06:00"
+    },
+    {
+      "id": "cit_13",
+      "clientaId": "usr_3",
+      "servicios": [
+        {
+          "servicioId": "srv_2",
+          "nombre": "Manicura semipermanente",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-11T16:00:00-06:00",
+      "fin": "2026-09-11T17:15:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "completada",
+      "montoCobrado": 20,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 8
+        },
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-10-02",
+      "creadaEn": "2026-09-08T19:00:00-06:00"
+    },
+    {
+      "id": "cit_14",
+      "clientaId": "usr_4",
+      "servicios": [
+        {
+          "servicioId": "srv_5",
+          "nombre": "Pedicura spa",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-12T10:30:00-06:00",
+      "fin": "2026-09-12T11:45:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "completada",
+      "montoCobrado": 20,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 10
+        }
+      ],
+      "fechaRetoque": "2026-10-12",
+      "creadaEn": "2026-09-09T16:30:00-06:00"
+    },
+    {
+      "id": "cit_15",
+      "clientaId": "usr_5",
+      "servicios": [
+        {
+          "servicioId": "srv_1",
+          "nombre": "Manicura clásica",
+          "precio": 15,
+          "duracionMin": 45
+        }
+      ],
+      "inicio": "2026-09-14T15:00:00-06:00",
+      "fin": "2026-09-14T16:00:00-06:00",
+      "duracionTotalMin": 60,
+      "montoTotal": 15,
+      "estado": "completada",
+      "montoCobrado": 15,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-10-14",
+      "creadaEn": "2026-09-11T13:45:00-06:00"
+    },
+    {
+      "id": "cit_16",
+      "clientaId": "usr_2",
+      "servicios": [
+        {
+          "servicioId": "srv_2",
+          "nombre": "Manicura semipermanente",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-15T17:00:00-06:00",
+      "fin": "2026-09-15T18:15:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "completada",
+      "montoCobrado": 20,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_5",
+          "cantidad": 8
+        },
+        {
+          "insumoId": "ins_2",
+          "cantidad": 5
+        }
+      ],
+      "fechaRetoque": "2026-10-06",
+      "creadaEn": "2026-09-13T10:00:00-06:00"
+    },
+    {
+      "id": "cit_17",
+      "clientaId": "usr_3",
+      "servicios": [
+        {
+          "servicioId": "srv_3",
+          "nombre": "Uñas esculpidas",
+          "precio": 35,
+          "duracionMin": 90
+        }
+      ],
+      "inicio": "2026-09-16T14:30:00-06:00",
+      "fin": "2026-09-16T16:15:00-06:00",
+      "duracionTotalMin": 105,
+      "montoTotal": 35,
+      "estado": "completada",
+      "montoCobrado": 35,
+      "insumosDescontados": [
+        {
+          "insumoId": "ins_1",
+          "cantidad": 20
+        },
+        {
+          "insumoId": "ins_3",
+          "cantidad": 10
+        }
+      ],
+      "fechaRetoque": "2026-10-11",
+      "creadaEn": "2026-09-14T11:00:00-06:00"
+    },
+    {
+      "id": "cit_18",
+      "clientaId": "usr_3",
+      "servicios": [
+        {
+          "servicioId": "srv_4",
+          "nombre": "Diseño artístico",
+          "precio": 18,
+          "duracionMin": 30
+        }
+      ],
+      "inicio": "2026-09-18T15:00:00-06:00",
+      "fin": "2026-09-18T15:45:00-06:00",
+      "duracionTotalMin": 45,
+      "montoTotal": 18,
+      "estado": "solicitada",
+      "notas": "Diseño floral en tonos pastel para evento",
+      "creadaEn": "2026-09-17T11:30:00-06:00"
+    },
+    {
+      "id": "cit_19",
+      "clientaId": "usr_2",
+      "servicios": [
+        {
+          "servicioId": "srv_2",
+          "nombre": "Manicura semipermanente",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-18T17:00:00-06:00",
+      "fin": "2026-09-18T18:15:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "confirmada",
+      "creadaEn": "2026-09-16T15:20:00-06:00"
+    },
+    {
+      "id": "cit_20",
+      "clientaId": "usr_5",
+      "servicios": [
+        {
+          "servicioId": "srv_5",
+          "nombre": "Pedicura spa",
+          "precio": 20,
+          "duracionMin": 60
+        }
+      ],
+      "inicio": "2026-09-19T10:00:00-06:00",
+      "fin": "2026-09-19T11:15:00-06:00",
+      "duracionTotalMin": 75,
+      "montoTotal": 20,
+      "estado": "confirmada",
+      "notas": "Exfoliación suave",
+      "creadaEn": "2026-09-17T09:40:00-06:00"
+    }
+  ]
+}

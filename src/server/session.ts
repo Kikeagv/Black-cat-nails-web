@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/server/db';
 import { Rol, Usuaria, UsuariaConHash } from '@/types';
 
@@ -46,6 +47,26 @@ export function sanitizarUsuaria(usuariaConHash: UsuariaConHash): Usuaria {
     inasistencias: usuariaConHash.inasistencias,
     notasPrivadas: usuariaConHash.notasPrivadas,
     creadaEn: usuariaConHash.creadaEn,
+  };
+}
+
+/**
+ * Formatea errores de validación de Zod con la estructura estándar de 03-api-rest.md.
+ */
+export function formatZodError(error: z.ZodError) {
+  const campos: Record<string, string> = {};
+  for (const issue of error.issues) {
+    const key = issue.path.join('.') || 'general';
+    if (!campos[key]) {
+      campos[key] = issue.message;
+    }
+  }
+  return {
+    error: {
+      code: 'validacion_fallida',
+      message: 'Los datos proporcionados no son válidos',
+      campos,
+    },
   };
 }
 

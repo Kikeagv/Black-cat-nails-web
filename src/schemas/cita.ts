@@ -29,5 +29,16 @@ export const cambiarEstadoCitaSchema = z.object({
   estado: estadoCitaSchema,
 });
 
+export const consultaDisponibilidadSchema = z.object({
+  fecha: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha debe tener el formato YYYY-MM-DD')
+    .refine((val) => !isNaN(Date.parse(val)), 'Fecha no válida'),
+  servicios: z
+    .string()
+    .min(1, 'Debe especificar al menos un ID de servicio'),
+});
+
 export type CrearCitaInput = z.infer<typeof crearCitaSchema>;
 export type CambiarEstadoCitaInput = z.infer<typeof cambiarEstadoCitaSchema>;
+export type ConsultaDisponibilidadInput = z.infer<typeof consultaDisponibilidadSchema>;

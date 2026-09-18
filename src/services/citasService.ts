@@ -1,9 +1,9 @@
 import { http } from './http';
-import { Cita, EstadoCita } from '@/types';
+import { Cita, EstadoCita, RespuestaDisponibilidad } from '@/types';
 
 /**
- * Servicio de cliente para citas y agendamiento (BCN-16 / BCN-19).
- * Punto único para interactuar con /api/citas/*.
+ * Servicio de cliente para citas y agendamiento (BCN-16 / BCN-18 / BCN-19).
+ * Punto único para interactuar con /api/citas/* y /api/disponibilidad.
  */
 export const citasService = {
   listar: (filtro?: {
@@ -20,6 +20,17 @@ export const citasService = {
 
     const query = params.toString() ? `?${params.toString()}` : '';
     return http.get<Cita[]>(`/api/citas${query}`);
+  },
+
+  obtenerDisponibilidad: (
+    fecha: string,
+    servicioIds: string[]
+  ): Promise<RespuestaDisponibilidad> => {
+    const params = new URLSearchParams({
+      fecha,
+      servicios: servicioIds.join(','),
+    });
+    return http.get<RespuestaDisponibilidad>(`/api/disponibilidad?${params.toString()}`);
   },
 };
 

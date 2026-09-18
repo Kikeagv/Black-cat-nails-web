@@ -1,15 +1,10 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, ChevronRight, Plus, Sparkles, Clock, DollarSign } from "lucide-react";
+import { Calendar, ChevronRight, Plus, Sparkles, Clock } from "lucide-react";
+import { AuthStatusTest } from "@/components/auth/AuthStatusTest";
 
 export default function Home() {
   return (
@@ -30,10 +25,13 @@ export default function Home() {
             Black Cat Nails
           </h1>
           <p className="text-body text-[var(--accent)] mt-1">
-            BCN-02 · Verificación de Tema y Tokens de Diseño
+            Estudio de manicura y estética de uñas · Etapa 2
           </p>
         </div>
       </header>
+
+      {/* Verificación de AuthContext (BCN-09) */}
+      <AuthStatusTest />
 
       {/* 1. Muestrario de Tokens de Color */}
       <section className="space-y-4">
@@ -198,7 +196,7 @@ export default function Home() {
 
       {/* Footer de verificación */}
       <footer className="pt-6 border-t border-white/10 text-center text-xs text-white/50">
-        Black Cat Nails Web · Rúbrica DPS941 · BCN-02 completado exitosamente
+        Black Cat Nails Web · Rúbrica DPS941 · BCN-09 completado exitosamente
       </footer>
     </main>
   );

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, ChevronRight, Plus, Sparkles, Clock } from "lucide-react";
 import { AuthStatusTest } from "@/components/auth/AuthStatusTest";
+import { CatalogoStatusTest } from "@/components/catalogo/CatalogoStatusTest";
 
 export default function Home() {
   return (
@@ -32,6 +33,9 @@ export default function Home() {
 
       {/* Verificación de AuthContext (BCN-09) */}
       <AuthStatusTest />
+
+      {/* Verificación de CatalogoContext (BCN-14) */}
+      <CatalogoStatusTest />
 
       {/* 1. Muestrario de Tokens de Color */}
       <section className="space-y-4">

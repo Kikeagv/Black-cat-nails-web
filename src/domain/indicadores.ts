@@ -42,6 +42,10 @@ const MESES_CORTOS = [
 function normalizarFecha(fecha?: Date | string): Date {
   if (!fecha) return new Date();
   if (typeof fecha === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+      const [y, m, d] = fecha.split('-').map(Number);
+      return new Date(y, m - 1, d, 12, 0, 0);
+    }
     return new Date(fecha);
   }
   return new Date(fecha.getTime());

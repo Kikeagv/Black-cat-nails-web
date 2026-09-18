@@ -23,12 +23,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  Info,
   Sparkles,
   AlertTriangle,
-  Scissors,
-  CheckSquare,
-  Square,
   Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -261,43 +257,36 @@ export default function AgendarPage() {
         </p>
       </div>
 
-      {/* Indicador de pasos */}
-      <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur">
-        <div className="flex items-center justify-between relative">
-          {/* Línea conectora */}
-          <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-[2px] bg-white/10 -z-0" />
-          <div
-            className="absolute left-6 top-1/2 -translate-y-1/2 h-[2px] bg-[var(--primary)] transition-all duration-300 -z-0"
-            style={{
-              width: paso === 1 ? '0%' : paso === 2 ? '50%' : '100%',
-            }}
-          />
-
+      {/* Indicador de pasos (Figma nodos 14:20, 14:89, 14:209) */}
+      <Card className="p-3.5 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur">
+        <div className="flex items-center justify-between gap-2">
           {/* Paso 1 */}
           <button
             type="button"
             onClick={() => setPaso(1)}
-            className="flex flex-col items-center gap-1.5 z-10 group cursor-pointer"
+            className="flex items-center gap-2 group cursor-pointer focus:outline-none"
           >
-            <div
-              className={`size-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+            <span
+              className={`px-3.5 py-1 rounded-[100px] text-xs font-semibold transition-all ${
                 paso === 1
-                  ? 'bg-[var(--primary)] text-white ring-4 ring-[var(--primary)]/20 shadow-md shadow-[var(--primary)]/30'
+                  ? 'bg-[var(--primary)] text-[#1A1209] shadow-sm shadow-[var(--primary)]/30'
                   : paso > 1
-                    ? 'bg-[var(--primary)] text-white'
+                    ? 'bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/40'
                     : 'bg-white/10 text-white/60'
               }`}
             >
-              {paso > 1 ? <Check className="size-4" /> : '1'}
-            </div>
+              {paso > 1 ? '✓ Paso 1' : 'Paso 1'}
+            </span>
             <span
-              className={`text-xs font-medium ${
-                paso === 1 ? 'text-[var(--primary)] font-semibold' : 'text-white/70'
+              className={`text-xs font-medium hidden sm:inline ${
+                paso === 1 ? 'text-white font-semibold' : 'text-white/60'
               }`}
             >
               Servicios
             </span>
           </button>
+
+          <div className="h-[2px] flex-1 bg-white/10 rounded-full mx-1" />
 
           {/* Paso 2 */}
           <button
@@ -309,31 +298,33 @@ export default function AgendarPage() {
               }
             }}
             disabled={serviciosSeleccionadosIds.length === 0}
-            className={`flex flex-col items-center gap-1.5 z-10 transition-opacity ${
+            className={`flex items-center gap-2 transition-opacity focus:outline-none ${
               serviciosSeleccionadosIds.length === 0
                 ? 'opacity-50 cursor-not-allowed'
                 : 'cursor-pointer'
             }`}
           >
-            <div
-              className={`size-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+            <span
+              className={`px-3.5 py-1 rounded-[100px] text-xs font-semibold transition-all ${
                 paso === 2
-                  ? 'bg-[var(--primary)] text-white ring-4 ring-[var(--primary)]/20 shadow-md shadow-[var(--primary)]/30'
+                  ? 'bg-[var(--primary)] text-[#1A1209] shadow-sm shadow-[var(--primary)]/30'
                   : paso > 2
-                    ? 'bg-[var(--primary)] text-white'
+                    ? 'bg-[var(--primary)]/20 text-[var(--primary)] border border-[var(--primary)]/40'
                     : 'bg-white/10 text-white/60'
               }`}
             >
-              {paso > 2 ? <Check className="size-4" /> : '2'}
-            </div>
+              {paso > 2 ? '✓ Paso 2' : 'Paso 2'}
+            </span>
             <span
-              className={`text-xs font-medium ${
-                paso === 2 ? 'text-[var(--primary)] font-semibold' : 'text-white/70'
+              className={`text-xs font-medium hidden sm:inline ${
+                paso === 2 ? 'text-white font-semibold' : 'text-white/60'
               }`}
             >
               Fecha y Hora
             </span>
           </button>
+
+          <div className="h-[2px] flex-1 bg-white/10 rounded-full mx-1" />
 
           {/* Paso 3 */}
           <button
@@ -342,24 +333,24 @@ export default function AgendarPage() {
               if (serviciosSeleccionadosIds.length > 0 && horaSeleccionada) setPaso(3);
             }}
             disabled={serviciosSeleccionadosIds.length === 0 || !horaSeleccionada}
-            className={`flex flex-col items-center gap-1.5 z-10 transition-opacity ${
+            className={`flex items-center gap-2 transition-opacity focus:outline-none ${
               serviciosSeleccionadosIds.length === 0 || !horaSeleccionada
                 ? 'opacity-50 cursor-not-allowed'
                 : 'cursor-pointer'
             }`}
           >
-            <div
-              className={`size-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+            <span
+              className={`px-3.5 py-1 rounded-[100px] text-xs font-semibold transition-all ${
                 paso === 3
-                  ? 'bg-[var(--primary)] text-white ring-4 ring-[var(--primary)]/20 shadow-md shadow-[var(--primary)]/30'
+                  ? 'bg-[var(--primary)] text-[#1A1209] shadow-sm shadow-[var(--primary)]/30'
                   : 'bg-white/10 text-white/60'
               }`}
             >
-              3
-            </div>
+              Paso 3
+            </span>
             <span
-              className={`text-xs font-medium ${
-                paso === 3 ? 'text-[var(--primary)] font-semibold' : 'text-white/70'
+              className={`text-xs font-medium hidden sm:inline ${
+                paso === 3 ? 'text-white font-semibold' : 'text-white/60'
               }`}
             >
               Confirmación
@@ -369,14 +360,14 @@ export default function AgendarPage() {
       </Card>
 
       {/* ========================================================================= */}
-      {/* PASO 1: SELECCIÓN MÚLTIPLE DE SERVICIOS                                   */}
+      {/* PASO 1: SELECCIÓN MÚLTIPLE DE SERVICIOS (Figma nodo 14:8)                */}
       {/* ========================================================================= */}
       {paso === 1 && (
         <div className="space-y-5 animate-in fade-in duration-200">
           <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <h2 className="text-2xl font-serif font-bold text-white flex items-center gap-2">
               <Sparkles className="size-5 text-[var(--primary)]" />
-              Selecciona uno o más servicios
+              Elegí tus servicios
             </h2>
             <p className="text-xs text-white/70">
               Podés combinar múltiples servicios (ej. manicura + retiro de uñas o diseño artístico)
@@ -433,10 +424,10 @@ export default function AgendarPage() {
                   >
                     <div className="flex items-start gap-3.5 min-w-0">
                       <div
-                        className={`size-6 rounded-[8px] flex items-center justify-center mt-0.5 transition-colors border ${
+                        className={`size-6 rounded-[6px] flex items-center justify-center mt-0.5 transition-colors border-2 ${
                           seleccionado
-                            ? 'bg-[var(--primary)] border-[var(--primary)] text-white'
-                            : 'border-white/30 bg-white/5 text-transparent'
+                            ? 'bg-[var(--primary)] border-[var(--primary)] text-[#1A1209]'
+                            : 'border-[var(--accent)]/60 bg-transparent text-transparent'
                         }`}
                       >
                         <Check className="size-4 stroke-[3]" />
@@ -505,10 +496,10 @@ export default function AgendarPage() {
                 type="button"
                 onClick={avanzarAPaso2}
                 disabled={serviciosSeleccionadosIds.length === 0}
-                className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-semibold rounded-[16px] px-6 h-12 gap-2 shadow-lg shadow-[var(--primary)]/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[#1A1209] font-bold rounded-[16px] px-6 h-12 gap-2 shadow-lg shadow-[var(--primary)]/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Continuar
-                <ChevronRight className="size-4" />
+                <ChevronRight className="size-4 stroke-[2.5]" />
               </Button>
             </div>
           </div>
@@ -516,15 +507,15 @@ export default function AgendarPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* PASO 2: CALENDARIO Y HORARIOS DISPONIBLES                                 */}
+      {/* PASO 2: CALENDARIO Y HORARIOS DISPONIBLES (Figma nodo 14:77)              */}
       {/* ========================================================================= */}
       {paso === 2 && (
         <div className="space-y-6 animate-in fade-in duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+              <h2 className="text-2xl font-serif font-bold text-white flex items-center gap-2">
                 <CalendarIcon className="size-5 text-[var(--primary)]" />
-                Fecha y horario
+                Fecha y hora
               </h2>
               <p className="text-xs text-white/70">
                 Seleccioná el día deseado y uno de los bloques donde cabe tu servicio (
@@ -546,7 +537,7 @@ export default function AgendarPage() {
           {/* Grid responsive: Calendario a la izquierda, Horarios a la derecha */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
             {/* Calendario */}
-            <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur md:col-span-6 flex flex-col items-center justify-center">
+            <Card className="p-4 rounded-[16px] border border-[var(--accent)]/30 bg-[#221910]/80 backdrop-blur md:col-span-6 flex flex-col items-center justify-center shadow-lg">
               <Calendar
                 mode="single"
                 selected={fechaSeleccionada}
@@ -568,10 +559,10 @@ export default function AgendarPage() {
             </Card>
 
             {/* Selector de Horarios */}
-            <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur md:col-span-6 flex flex-col justify-between space-y-4">
+            <Card className="p-4 rounded-[16px] border border-[var(--accent)]/30 bg-[#221910]/80 backdrop-blur md:col-span-6 flex flex-col justify-between space-y-4 shadow-lg">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-white">Horarios disponibles</span>
+                  <span className="text-base font-serif font-bold text-white">Horarios disponibles</span>
                   <span className="text-xs text-white/60">
                     Duración: {formatearDuracion(duracionTotalConPrepMin)}
                   </span>
@@ -611,11 +602,11 @@ export default function AgendarPage() {
                               ? `Disponible a las ${h.hora}`
                               : `No disponible (no cabe antes del cierre o ya está ocupado)`
                           }
-                          className={`py-2 px-2.5 rounded-[12px] text-xs font-semibold transition-all flex items-center justify-center gap-1 border ${
+                          className={`py-2 px-2.5 rounded-[10px] text-xs font-semibold transition-all flex items-center justify-center gap-1 border ${
                             h.disponible
                               ? seleccionado
-                                ? 'bg-[var(--primary)] text-white border-[var(--primary)] shadow-md shadow-[var(--primary)]/30 ring-2 ring-[var(--primary)]/30'
-                                : 'bg-white/5 border-white/10 text-white hover:bg-white/15 hover:border-white/30 cursor-pointer'
+                                ? 'bg-[var(--primary)] text-[#1A1209] font-bold border-transparent shadow-md shadow-[var(--primary)]/30 ring-2 ring-[var(--primary)]/40'
+                                : 'bg-[#221910] border border-[var(--accent)]/40 text-white hover:border-[var(--primary)] hover:bg-[#2c1e14] cursor-pointer'
                               : 'bg-white/[0.02] border-white/5 text-white/25 cursor-not-allowed line-through'
                           }`}
                         >
@@ -635,7 +626,7 @@ export default function AgendarPage() {
                   <span>Seleccionado</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="size-2 rounded-full bg-white/30 border border-white/40" />
+                  <div className="size-2 rounded-full bg-[#221910] border border-[var(--accent)]/40" />
                   <span>Disponible</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -652,7 +643,7 @@ export default function AgendarPage() {
               type="button"
               variant="outline"
               onClick={() => setPaso(1)}
-              className="border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-[16px] px-5 h-11 gap-2"
+              className="border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-[16px] px-5 h-11 gap-2 cursor-pointer"
             >
               <ChevronLeft className="size-4" />
               Atrás
@@ -662,24 +653,24 @@ export default function AgendarPage() {
               type="button"
               onClick={avanzarAPaso3}
               disabled={!fechaSeleccionada || !horaSeleccionada}
-              className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-semibold rounded-[16px] px-6 h-11 gap-2 shadow-lg shadow-[var(--primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[#1A1209] font-bold rounded-[16px] px-6 h-11 gap-2 shadow-lg shadow-[var(--primary)]/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition-all"
             >
-              Continuar al Resumen
-              <ChevronRight className="size-4" />
+              Continuar
+              <ChevronRight className="size-4 stroke-[2.5]" />
             </Button>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* PASO 3: RESUMEN, NOTAS Y CONFIRMACIÓN                                     */}
+      {/* PASO 3: RESUMEN, NOTAS Y CONFIRMACIÓN (Figma nodo 14:197)                 */}
       {/* ========================================================================= */}
       {paso === 3 && (
         <div className="space-y-6 animate-in fade-in duration-200">
           <div>
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <h2 className="text-2xl font-serif font-bold text-white flex items-center gap-2">
               <CheckCircle2 className="size-5 text-[var(--primary)]" />
-              Confirmar reserva
+              Confirmación
             </h2>
             <p className="text-xs text-white/70">
               Revisá los detalles de tu cita antes de confirmar
@@ -708,81 +699,73 @@ export default function AgendarPage() {
             </div>
           )}
 
-          {/* Tarjeta de Resumen */}
-          <Card className="p-5 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
-              Resumen de la cita
-            </h3>
+          {/* Tarjeta de Resumen Berry Crush (Figma nodo 14:217) */}
+          <Card className="p-5 rounded-[16px] border border-white/15 bg-[var(--surface)] text-white shadow-2xl space-y-4">
+            <p className="font-serif font-bold text-[18px] text-white">
+              Resumen de tu cita
+            </p>
 
-            {/* Fecha y hora */}
-            <div className="p-3.5 rounded-[12px] bg-white/5 border border-white/10 flex items-center justify-between">
+            <div className="flex flex-col gap-2.5">
+              {/* Fila Servicios */}
               <div className="flex items-center gap-3">
-                <CalendarIcon className="size-5 text-[var(--primary)]" />
-                <div>
-                  <div className="text-sm font-semibold text-white capitalize">
-                    {fechaSeleccionada
-                      ? format(fechaSeleccionada, "EEEE d 'de' MMMM, yyyy", { locale: es })
-                      : 'Fecha no seleccionada'}
-                  </div>
-                  <div className="text-xs text-white/70">
-                    Hora de inicio: {horaSeleccionada}
-                  </div>
-                </div>
+                <div className="size-1.5 rounded-[2px] bg-white shrink-0" />
+                <span className="text-sm text-white/70">Servicios:</span>
+                <span className="text-sm font-semibold text-white ml-auto text-right">
+                  {serviciosSeleccionados.map((s) => s.nombre).join(', ')}
+                </span>
               </div>
 
-              <Badge className="bg-[var(--primary)] text-white text-xs">
-                {horaSeleccionada}
-              </Badge>
-            </div>
+              {/* Fila Fecha */}
+              <div className="flex items-center gap-3">
+                <div className="size-1.5 rounded-[2px] bg-white shrink-0" />
+                <span className="text-sm text-white/70">Fecha:</span>
+                <span className="text-sm font-semibold text-white ml-auto text-right capitalize">
+                  {fechaSeleccionada
+                    ? format(fechaSeleccionada, "EEE d MMM yyyy", { locale: es })
+                    : 'No seleccionada'}
+                </span>
+              </div>
 
-            {/* Servicios incluidos */}
-            <div className="space-y-2">
-              <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
-                Servicios ({serviciosSeleccionados.length})
-              </span>
-              <div className="divide-y divide-white/5">
-                {serviciosSeleccionados.map((s) => (
-                  <div key={s.id} className="py-2 flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <Scissors className="size-3.5 text-[var(--accent)]" />
-                      <span className="text-white">{s.nombre}</span>
-                      <span className="text-xs text-white/50">({s.duracionMin} min)</span>
-                    </div>
-                    <span className="font-semibold text-white">${s.precio.toFixed(2)}</span>
-                  </div>
-                ))}
+              {/* Fila Hora */}
+              <div className="flex items-center gap-3">
+                <div className="size-1.5 rounded-[2px] bg-white shrink-0" />
+                <span className="text-sm text-white/70">Hora:</span>
+                <span className="text-sm font-semibold text-white ml-auto text-right">
+                  {horaSeleccionada} ({formatearDuracion(duracionTotalConPrepMin)})
+                </span>
+              </div>
+
+              {/* Fila Total */}
+              <div className="flex items-center gap-3 pt-1 border-t border-white/20">
+                <div className="size-1.5 rounded-[2px] bg-white shrink-0" />
+                <span className="text-sm text-white/70">Total:</span>
+                <span className="text-lg font-bold text-white ml-auto text-right">
+                  ${montoTotal.toFixed(2)}
+                </span>
               </div>
             </div>
 
-            {/* Tiempos y Monto Total */}
-            <div className="pt-3 border-t border-white/10 space-y-1.5 text-xs text-white/70">
+            {/* Desglose complementario de servicios y preparación */}
+            <div className="pt-2 border-t border-white/15 space-y-1.5 text-xs text-white/80">
               <div className="flex justify-between">
                 <span>Duración de servicios:</span>
-                <span className="text-white font-medium">
-                  {formatearDuracion(duracionServiciosMin)}
-                </span>
+                <span className="font-medium">{formatearDuracion(duracionServiciosMin)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Tiempo de preparación:</span>
-                <span className="text-white font-medium">15 min</span>
+                <span className="font-medium">15 min</span>
               </div>
-              <div className="flex justify-between">
-                <span>Tiempo total estimado en salón:</span>
-                <span className="text-white font-semibold">
-                  {formatearDuracion(duracionTotalConPrepMin)}
-                </span>
-              </div>
-              <div className="flex justify-between text-base pt-2 border-t border-white/10 text-white font-bold">
-                <span>Total a pagar:</span>
-                <span className="text-xl text-[var(--primary)]">${montoTotal.toFixed(2)}</span>
+              <div className="flex justify-between font-semibold">
+                <span>Tiempo total estimado:</span>
+                <span>{formatearDuracion(duracionTotalConPrepMin)}</span>
               </div>
             </div>
           </Card>
 
-          {/* Notas para la estilista */}
-          <Card className="p-5 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-2">
+          {/* Notas para la estilista (Figma nodo 14:233) */}
+          <Card className="p-4 rounded-[16px] border border-white/10 bg-[#221910]/80 backdrop-blur space-y-2">
             <label htmlFor="notas" className="text-sm font-semibold text-white flex items-center justify-between">
-              <span>Notas o preferencias para la estilista (opcional)</span>
+              <span>Notas para la estilista</span>
               <span className="text-xs text-white/50 font-normal">{notas.length}/300</span>
             </label>
             <textarea
@@ -791,42 +774,44 @@ export default function AgendarPage() {
               maxLength={300}
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
-              placeholder="Ej: Tonos nude, estilo almendrado, uña quebrada en mano izquierda..."
-              className="w-full bg-black/20 border border-white/10 rounded-[12px] p-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-[var(--primary)] transition-colors resize-none"
+              placeholder="¿Algún detalle o preferencia especial?"
+              className="w-full bg-[#1A1209] border border-[var(--accent)]/50 focus:border-[var(--primary)] rounded-[12px] p-3 text-sm text-white placeholder:text-white/50 focus:outline-none transition-colors resize-none"
             />
           </Card>
 
-          {/* Casilla de política de cancelación */}
+          {/* Casilla de política de cancelación (Figma nodo 14:243) */}
           <div
             onClick={() => setAceptaPolitica((prev) => !prev)}
-            className={`p-4 rounded-[16px] border transition-all cursor-pointer flex items-start gap-3 select-none ${
+            className={`p-3.5 rounded-[12px] border transition-all cursor-pointer flex items-start gap-3 select-none ${
               aceptaPolitica
-                ? 'bg-[var(--surface)]/15 border-[var(--primary)]'
-                : 'bg-card/40 border-white/10 hover:border-white/20'
+                ? 'bg-[#221910] border-[var(--primary)]'
+                : 'bg-[#221910]/60 border-white/10 hover:border-white/20'
             }`}
           >
-            <div className="mt-0.5 shrink-0 text-[var(--primary)]">
-              {aceptaPolitica ? (
-                <CheckSquare className="size-5" />
-              ) : (
-                <Square className="size-5 text-white/40" />
-              )}
+            <div
+              className={`mt-0.5 size-5 rounded-[4px] flex items-center justify-center shrink-0 border transition-colors ${
+                aceptaPolitica
+                  ? 'bg-[var(--primary)] border-[var(--primary)] text-[#1A1209]'
+                  : 'border-[var(--accent)]/60 bg-transparent text-transparent'
+              }`}
+            >
+              <Check className="size-3.5 stroke-[3]" />
             </div>
             <div className="space-y-1 text-xs">
-              <div className="font-semibold text-white flex items-center gap-1.5">
-                <Info className="size-3.5 text-[var(--accent)]" />
-                Política de cancelación y puntualidad
-              </div>
-              <p className="text-white/70 leading-relaxed">
-                Entiendo y acepto que las citas deben cancelarse con al menos{' '}
-                <strong className="text-white font-medium">12 horas de anticipación</strong>. Las
-                inasistencias sin previo aviso se registrarán en mi ficha de clienta y no se
-                permite reincidir.
+              <p className="text-white/80 leading-normal">
+                Acepto la{' '}
+                <span className="text-[#9aa6e0] underline decoration-solid font-medium">
+                  política de cancelación
+                </span>{' '}
+                de turnos
+              </p>
+              <p className="text-white/60 text-[11px] leading-relaxed">
+                Las citas deben cancelarse con al menos 12 horas de anticipación.
               </p>
             </div>
           </div>
 
-          {/* Botones de acción del Paso 3 */}
+          {/* Botones de acción del Paso 3 (Figma nodo 14:247) */}
           <div className="flex items-center justify-between pt-4 border-t border-white/10">
             <Button
               type="button"
@@ -836,7 +821,7 @@ export default function AgendarPage() {
                 cargarDisponibilidad(fechaSeleccionada, serviciosSeleccionadosIds);
               }}
               disabled={enviando}
-              className="border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-[16px] px-5 h-12 gap-2"
+              className="border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-[16px] px-5 h-12 gap-2 cursor-pointer"
             >
               <ChevronLeft className="size-4" />
               Atrás
@@ -846,7 +831,7 @@ export default function AgendarPage() {
               type="button"
               onClick={confirmarCita}
               disabled={!aceptaPolitica || enviando}
-              className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white font-semibold rounded-[16px] px-7 h-12 gap-2 shadow-xl shadow-[var(--primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-[#1A1209] font-bold rounded-[12px] px-8 h-12 gap-2 shadow-xl shadow-[var(--primary)]/30 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer text-base"
             >
               {enviando ? (
                 <>
@@ -854,10 +839,7 @@ export default function AgendarPage() {
                   Agendando cita...
                 </>
               ) : (
-                <>
-                  <CheckCircle2 className="size-4" />
-                  Confirmar y agendar
-                </>
+                'Confirmar cita'
               )}
             </Button>
           </div>

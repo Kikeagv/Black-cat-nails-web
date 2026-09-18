@@ -1,5 +1,3 @@
-import { http } from './http';
-
 /**
  * Servicio de gestión de clientas (se completará en BCN-29)
  */

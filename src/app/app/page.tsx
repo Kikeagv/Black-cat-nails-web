@@ -367,6 +367,80 @@ export default function ClientaAppPage() {
           </div>
         )}
       </section>
+
+      {/* 4. Sección: Diseños Destacados (Figma nodo 5:101) */}
+      <section aria-label="Diseños destacados" className="space-y-4 pt-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-serif text-white font-semibold">
+            Diseños destacados
+          </h2>
+          <Link
+            href="/app/agendar"
+            className="text-xs font-semibold text-[var(--accent)] hover:text-white transition-colors"
+          >
+            Ver todos
+          </Link>
+        </div>
+
+        {/* Carrusel / galería horizontal de diseños */}
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+          {[
+            {
+              id: 'd1',
+              titulo: 'Velvet Cat Eye',
+              sub: 'Acrílico + Brillo magnético',
+              gradiente: 'from-[#4a1c36] via-[#2d1b28] to-[#1a1209]',
+              badge: 'Tendencia',
+            },
+            {
+              id: 'd2',
+              titulo: 'French Clásico',
+              sub: 'Semipermanente blanco puro',
+              gradiente: 'from-[#2e2640] via-[#1f1a2e] to-[#1a1209]',
+              badge: 'Elegante',
+            },
+            {
+              id: 'd3',
+              titulo: 'Chrome Rose',
+              sub: 'Efecto espejo oro rosa',
+              gradiente: 'from-[#522938] via-[#331c26] to-[#1a1209]',
+              badge: 'Popular',
+            },
+            {
+              id: 'd4',
+              titulo: 'Nail Art Pastel',
+              sub: 'Diseño artístico mano alzada',
+              gradiente: 'from-[#3a294d] via-[#231b33] to-[#1a1209]',
+              badge: 'Artístico',
+            },
+          ].map((item) => (
+            <Link
+              key={item.id}
+              href="/app/agendar"
+              className="group shrink-0"
+            >
+              <div
+                className={`size-[108px] sm:size-[120px] rounded-[12px] border border-white/10 bg-gradient-to-br ${item.gradiente} p-3 flex flex-col justify-between hover:border-[var(--primary)] hover:scale-[1.03] transition-all shadow-md relative overflow-hidden`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/15 text-white/90">
+                    {item.badge}
+                  </span>
+                  <Sparkles className="size-3 text-[var(--primary)] group-hover:rotate-12 transition-transform" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-white leading-tight truncate">
+                    {item.titulo}
+                  </p>
+                  <p className="text-[10px] text-white/60 leading-tight truncate">
+                    {item.sub}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

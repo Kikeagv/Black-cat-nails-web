@@ -52,6 +52,9 @@ export interface ServicioEnCita {
 export interface Cita {
   id: string;
   clientaId: string;
+  clientaNombre?: string;
+  clientaTelefono?: string;
+  clientaCorreo?: string;
   servicios: ServicioEnCita[];
   inicio: string;             // ISO con zona
   fin: string;                // ISO con zona

@@ -48,7 +48,7 @@ function formatearIsoElSalvador(ms: number): string {
  */
 export async function GET(request: NextRequest) {
   try {
-    const usuaria = await requireSession();
+    const usuaria = await requireSession(request);
     const url = new URL(request.url);
 
     const desdeParam = url.searchParams.get('desde') || undefined;
@@ -82,10 +82,21 @@ export async function GET(request: NextRequest) {
       estado,
     });
 
-    // Ordenar cronológicamente por inicio
-    citas.sort((a, b) => a.inicio.localeCompare(b.inicio));
+    // Enriquecer cada cita con los datos vigentes de la clienta
+    const citasEnriquecidas = citas.map((cita) => {
+      const clienta = db.usuarias.findById(cita.clientaId);
+      return {
+        ...cita,
+        clientaNombre: clienta?.nombre,
+        clientaTelefono: clienta?.telefono,
+        clientaCorreo: clienta?.correo,
+      };
+    });
 
-    return NextResponse.json(citas, { status: 200 });
+    // Ordenar cronológicamente por inicio
+    citasEnriquecidas.sort((a, b) => a.inicio.localeCompare(b.inicio));
+
+    return NextResponse.json(citasEnriquecidas, { status: 200 });
   } catch (error) {
     const authResponse = handleAuthError(error);
     if (authResponse) {
@@ -116,7 +127,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const usuaria = await requireSession();
+    const usuaria = await requireSession(request);
     const body = await request.json().catch(() => null);
 
     if (!body) {

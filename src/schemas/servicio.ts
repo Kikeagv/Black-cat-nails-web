@@ -5,7 +5,7 @@ export const consumoInsumoSchema = z.object({
   cantidad: z.number().positive('La cantidad debe ser mayor a 0'),
 });
 
-export const crearServicioSchema = z.object({
+export const baseServicioSchema = z.object({
   nombre: z
     .string()
     .trim()
@@ -29,12 +29,17 @@ export const crearServicioSchema = z.object({
     .min(0, 'El ciclo de retorno no puede ser negativo')
     .max(90, 'El ciclo de retorno no puede superar 90 días')
     .refine((val) => val === 0 || val >= 7, 'El ciclo debe ser 0 o entre 7 y 90 días'),
-  activo: z.boolean().default(true),
+  activo: z.boolean(),
   imagenUrl: z.string().url('URL de imagen no válida').optional().or(z.literal('')),
+  consumos: z.array(consumoInsumoSchema),
+});
+
+export const crearServicioSchema = baseServicioSchema.extend({
+  activo: z.boolean().default(true),
   consumos: z.array(consumoInsumoSchema).default([]),
 });
 
-export const actualizarServicioSchema = crearServicioSchema.partial();
+export const actualizarServicioSchema = baseServicioSchema.partial();
 
 export type ConsumoInsumoInput = z.infer<typeof consumoInsumoSchema>;
 export type CrearServicioInput = z.infer<typeof crearServicioSchema>;

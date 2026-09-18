@@ -1,10 +1,11 @@
 import { http } from './http';
+import { Insumo } from '@/types';
 
 /**
- * Servicio de inventario e insumos (se completará en BCN-28)
+ * Servicio de cliente para insumos e inventario (BCN-15 / BCN-28).
  */
 export const insumosService = {
-  // Se implementará en ticket BCN-28
+  listar: (): Promise<Insumo[]> => http.get<Insumo[]>('/api/insumos'),
 };
 
 export default insumosService;

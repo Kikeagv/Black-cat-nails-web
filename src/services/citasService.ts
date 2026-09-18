@@ -32,6 +32,16 @@ export const citasService = {
     });
     return http.get<RespuestaDisponibilidad>(`/api/disponibilidad?${params.toString()}`);
   },
+
+  crear: (datos: {
+    servicioIds: string[];
+    inicio: string;
+    notas?: string;
+    clientaId?: string;
+    imagenReferenciaUrl?: string;
+  }): Promise<Cita> => {
+    return http.post<Cita>('/api/citas', datos);
+  },
 };
 
 export default citasService;

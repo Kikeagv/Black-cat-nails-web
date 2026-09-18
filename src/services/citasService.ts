@@ -42,6 +42,10 @@ export const citasService = {
   }): Promise<Cita> => {
     return http.post<Cita>('/api/citas', datos);
   },
+
+  cambiarEstado: (id: string, estado: EstadoCita): Promise<Cita> => {
+    return http.patch<Cita>(`/api/citas/${id}/estado`, { estado });
+  },
 };
 
 export default citasService;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import { CatalogoProvider } from "@/context/CatalogoContext";
+import { AgendaProvider } from "@/context/AgendaContext";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -33,8 +34,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <AuthProvider>
           <CatalogoProvider>
-            {children}
-            <Toaster />
+            <AgendaProvider>
+              {children}
+              <Toaster />
+            </AgendaProvider>
           </CatalogoProvider>
         </AuthProvider>
       </body>

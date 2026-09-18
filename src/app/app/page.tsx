@@ -11,7 +11,7 @@
  * - Filtros rápidos por categoría de servicio.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
   Calendar,
@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCatalogo } from '@/context/CatalogoContext';
-import { citasService } from '@/services/citasService';
-import { Cita, EstadoCita } from '@/types';
+import { useAgenda } from '@/context/AgendaContext';
+import { EstadoCita } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -71,52 +71,20 @@ export default function ClientaAppPage() {
   const { usuaria } = useAuth();
   const { servicios, cargando: cargandoCatalogo } = useCatalogo();
 
-  const [proximaCita, setProximaCita] = useState<Cita | null>(null);
-  const [cargandoCitas, setCargandoCitas] = useState(true);
+  const { citas, cargando: cargandoCitas } = useAgenda();
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>('todas');
 
-  // Consulta las citas de la clienta al montar
-  useEffect(() => {
-    let isMounted = true;
-
-    async function cargarCitasClienta() {
-      try {
-        setCargandoCitas(true);
-        const data = await citasService.listar();
-        if (isMounted) {
-          const ahora = Date.now();
-          const activas = data.filter((c) => {
-            const esEstadoValido =
-              c.estado === 'solicitada' ||
-              c.estado === 'confirmada' ||
-              c.estado === 'en_curso';
-            const fechaFin = new Date(c.fin).getTime();
-            return esEstadoValido && fechaFin >= ahora;
-          });
-          activas.sort(
-            (a, b) => new Date(a.inicio).getTime() - new Date(b.inicio).getTime()
-          );
-          setProximaCita(activas.length > 0 ? activas[0] : null);
-        }
-      } catch {
-        if (isMounted) {
-          setProximaCita(null);
-        }
-      } finally {
-        if (isMounted) {
-          setCargandoCitas(false);
-        }
-      }
-    }
-
-    if (usuaria) {
-      cargarCitasClienta();
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [usuaria]);
+  // Próxima cita activa de la clienta obtenida reactivamente del AgendaContext
+  const proximaCita = useMemo(() => {
+    const activas = citas.filter(
+      (c) =>
+        c.estado === 'solicitada' ||
+        c.estado === 'confirmada' ||
+        c.estado === 'en_curso'
+    );
+    activas.sort((a, b) => a.inicio.localeCompare(b.inicio));
+    return activas.length > 0 ? activas[0] : null;
+  }, [citas]);
 
   // Servicios activos en el catálogo
   const serviciosActivos = useMemo(() => {

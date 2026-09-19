@@ -86,3 +86,68 @@ export function calcularFechaRetoque(
 
   return fecha.toISOString().slice(0, 10);
 }
+
+export interface RendimientoClientas {
+  clientasAtendibles: number;
+  serviciosAsociados: string[];
+  consumoPromedio: number;
+  rangoClientas?: { min: number; max: number };
+}
+
+/**
+ * Calcula el rendimiento de un insumo en términos de clientas atendibles (RN-04 / RF-06),
+ * considerando los consumos de los servicios activos del catálogo.
+ *
+ * Si ningún servicio activo consume este insumo, retorna null.
+ *
+ * @param insumo Insumo o registro con id y existencia actual
+ * @param servicios Catálogo de servicios disponibles
+ * @returns Rendimiento estimado en clientas atendibles o null si no está vinculado
+ */
+export function calcularRendimientoClientas(
+  insumo: Pick<Insumo, 'id' | 'existencia'>,
+  servicios: Servicio[]
+): RendimientoClientas | null {
+  if (!servicios || servicios.length === 0) return null;
+
+  const serviciosAsociados = servicios.filter(
+    (s) =>
+      s.activo &&
+      s.consumos?.some((c) => c.insumoId === insumo.id && c.cantidad > 0)
+  );
+
+  if (serviciosAsociados.length === 0) return null;
+
+  const cantidades = serviciosAsociados
+    .map((s) => {
+      const consumo = s.consumos?.find((c) => c.insumoId === insumo.id);
+      return consumo ? consumo.cantidad : 0;
+    })
+    .filter((cant) => cant > 0);
+
+  if (cantidades.length === 0) return null;
+
+  const suma = cantidades.reduce((acc, c) => acc + c, 0);
+  const consumoPromedio = suma / cantidades.length;
+
+  const clientasAtendibles =
+    consumoPromedio > 0 ? Math.floor(insumo.existencia / consumoPromedio) : 0;
+
+  const minConsumo = Math.min(...cantidades);
+  const maxConsumo = Math.max(...cantidades);
+
+  const rangoClientas =
+    minConsumo !== maxConsumo
+      ? {
+          min: maxConsumo > 0 ? Math.floor(insumo.existencia / maxConsumo) : 0,
+          max: minConsumo > 0 ? Math.floor(insumo.existencia / minConsumo) : 0,
+        }
+      : undefined;
+
+  return {
+    clientasAtendibles,
+    serviciosAsociados: serviciosAsociados.map((s) => s.nombre),
+    consumoPromedio: Number(consumoPromedio.toFixed(2)),
+    rangoClientas,
+  };
+}

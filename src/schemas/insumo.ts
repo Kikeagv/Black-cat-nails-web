@@ -19,8 +19,24 @@ export const crearInsumoSchema = z.object({
     .min(0, 'El costo no puede ser negativo'),
 });
 
-export const actualizarInsumoSchema = crearInsumoSchema.partial();
+export const registrarCompraSchema = z.object({
+  cantidadComprada: z
+    .number()
+    .positive('La cantidad comprada debe ser mayor a 0'),
+  costo: z
+    .number()
+    .min(0, 'El costo no puede ser negativo')
+    .optional(),
+});
+
+export const actualizarInsumoSchema = crearInsumoSchema.partial().extend({
+  cantidadComprada: z
+    .number()
+    .positive('La cantidad comprada debe ser mayor a 0')
+    .optional(),
+});
 
 export type UnidadInsumo = z.infer<typeof unidadInsumoSchema>;
 export type CrearInsumoInput = z.infer<typeof crearInsumoSchema>;
+export type RegistrarCompraInput = z.infer<typeof registrarCompraSchema>;
 export type ActualizarInsumoInput = z.infer<typeof actualizarInsumoSchema>;

@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import { CatalogoProvider } from "@/context/CatalogoContext";
 import { AgendaProvider } from "@/context/AgendaContext";
+import { InventarioProvider } from "@/context/InventarioContext";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -35,8 +36,10 @@ export default function RootLayout({
         <AuthProvider>
           <CatalogoProvider>
             <AgendaProvider>
-              {children}
-              <Toaster />
+              <InventarioProvider>
+                {children}
+                <Toaster />
+              </InventarioProvider>
             </AgendaProvider>
           </CatalogoProvider>
         </AuthProvider>

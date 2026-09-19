@@ -16,6 +16,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { useRouter } from 'next/navigation';
 import { LoginInput, RegistroInput } from '@/schemas';
 import { authService } from '@/services/authService';
 import { Usuaria } from '@/types';
@@ -92,13 +93,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return data;
   }, []);
 
+  const router = useRouter();
+
   const logout = useCallback(async (): Promise<void> => {
     try {
       await authService.logout();
     } finally {
       setUsuaria(null);
+      router.push('/login');
+      router.refresh();
     }
-  }, []);
+  }, [router]);
 
   const value: AuthContextType = {
     usuaria,

@@ -55,9 +55,12 @@ export async function proxy(request: NextRequest) {
   }
 
   // 3. Redirección en la raíz según sesión (05-ui-y-rutas.md)
-  if (esRaiz && rol) {
-    const destino = rol === 'admin' ? '/admin' : '/app';
-    return NextResponse.redirect(new URL(destino, request.url));
+  if (esRaiz) {
+    if (rol) {
+      const destino = rol === 'admin' ? '/admin' : '/app';
+      return NextResponse.redirect(new URL(destino, request.url));
+    }
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   return NextResponse.next();

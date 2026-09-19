@@ -20,6 +20,8 @@ import {
   Sparkles,
   ChevronRight,
   ArrowRight,
+  AlertCircle,
+  RotateCcw,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCatalogo } from '@/context/CatalogoContext';
@@ -69,9 +71,19 @@ function formatearFechaCita(isoString: string): string {
 
 export default function ClientaAppPage() {
   const { usuaria } = useAuth();
-  const { servicios, cargando: cargandoCatalogo } = useCatalogo();
+  const {
+    servicios,
+    cargando: cargandoCatalogo,
+    error: errorCatalogo,
+    cargarServicios,
+  } = useCatalogo();
 
-  const { citas, cargando: cargandoCitas } = useAgenda();
+  const {
+    citas,
+    cargando: cargandoCitas,
+    error: errorCitas,
+    recargar: recargarCitas,
+  } = useAgenda();
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>('todas');
 
   // Próxima cita activa de la clienta obtenida reactivamente del AgendaContext
@@ -130,6 +142,30 @@ export default function ClientaAppPage() {
             </div>
             <div className="h-8 bg-white/10 rounded w-1/4" />
           </div>
+        ) : errorCitas ? (
+          <Card
+            variant="surface"
+            className="p-5 rounded-[16px] shadow-xl border border-red-500/30 bg-red-950/20 space-y-3"
+          >
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-red-300">
+              <AlertCircle className="size-4" />
+              <span>No se pudo cargar tu próxima cita</span>
+            </div>
+            <p className="text-sm text-white/80">
+              {errorCitas}
+            </p>
+            <div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => recargarCitas()}
+                className="text-xs border-white/20 text-white hover:bg-white/10"
+              >
+                <RotateCcw className="size-3.5 mr-1.5" />
+                Reintentar
+              </Button>
+            </div>
+          </Card>
         ) : proximaCita ? (
           /* Tarjeta Destacada con Cita Activa */
           <Card
@@ -292,6 +328,23 @@ export default function ClientaAppPage() {
               </div>
             ))}
           </div>
+        ) : errorCatalogo ? (
+          <Card className="p-6 text-center rounded-[16px] border border-red-500/30 bg-red-950/20 space-y-3">
+            <AlertCircle className="size-8 mx-auto text-red-400" />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-white">Error al cargar el catálogo de servicios</p>
+              <p className="text-xs text-white/70">{errorCatalogo}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => cargarServicios()}
+              className="text-xs border-red-500/40 text-red-200 hover:bg-red-500/20"
+            >
+              <RotateCcw className="size-3.5 mr-1.5" />
+              Reintentar
+            </Button>
+          </Card>
         ) : serviciosFiltrados.length === 0 ? (
           <Card className="p-8 text-center rounded-[16px] border border-white/10 bg-card/40 space-y-2">
             <p className="text-sm text-white/80">

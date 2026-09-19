@@ -26,6 +26,7 @@ import {
   Sparkles,
   AlertTriangle,
   Loader2,
+  RotateCcw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -52,7 +53,12 @@ function formatearDuracion(minutos: number): string {
 
 export default function AgendarPage() {
   const router = useRouter();
-  const { servicios, cargando: cargandoCatalogo } = useCatalogo();
+  const {
+    servicios,
+    cargando: cargandoCatalogo,
+    error: errorCatalogo,
+    cargarServicios,
+  } = useCatalogo();
   const { crear } = useAgenda();
 
   // Paso actual (1: Servicios, 2: Fecha y Hora, 3: Confirmación)
@@ -402,6 +408,24 @@ export default function AgendarPage() {
                 />
               ))}
             </div>
+          ) : errorCatalogo ? (
+            <Card className="p-6 text-center rounded-[16px] border border-red-500/30 bg-red-950/20 space-y-3">
+              <AlertTriangle className="size-8 mx-auto text-red-400" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-white">Error al cargar servicios disponibles</p>
+                <p className="text-xs text-white/70">{errorCatalogo}</p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => cargarServicios()}
+                className="text-xs border-red-500/40 text-red-200 hover:bg-red-500/20"
+              >
+                <RotateCcw className="size-3.5 mr-1.5" />
+                Reintentar
+              </Button>
+            </Card>
           ) : serviciosVisibles.length === 0 ? (
             <Card className="p-8 text-center rounded-[16px] border border-white/10 bg-card/60">
               <p className="text-sm text-white/70">
@@ -578,9 +602,23 @@ export default function AgendarPage() {
                     ))}
                   </div>
                 ) : errorHorarios ? (
-                  <div className="p-4 rounded-[12px] bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-start gap-2">
-                    <AlertTriangle className="size-4 shrink-0 mt-0.5" />
-                    <span>{errorHorarios}</span>
+                  <div className="p-4 rounded-[12px] bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex flex-col gap-2.5">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="size-4 shrink-0 mt-0.5" />
+                      <span>{errorHorarios}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="xs"
+                      onClick={() =>
+                        cargarDisponibilidad(fechaSeleccionada, serviciosSeleccionadosIds)
+                      }
+                      className="self-start text-xs border-red-400/30 text-red-300 hover:bg-red-500/20"
+                    >
+                      <RotateCcw className="size-3 mr-1" />
+                      Reintentar
+                    </Button>
                   </div>
                 ) : horariosDisponibles.length === 0 ? (
                   <div className="py-8 text-center text-xs text-white/60 space-y-1">

@@ -11,6 +11,8 @@ import {
   Lock,
   Save,
   Loader2,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -86,6 +88,25 @@ export function FichaClientaDialog({
       activo = false;
     };
   }, [abierto, clientaId]);
+
+  const handleReintentar = () => {
+    if (!clientaId) return;
+    setError(null);
+    clientasService
+      .obtenerFicha(clientaId)
+      .then((res) => {
+        setFicha(res);
+        setNotasPrivadas(res.clienta.notasPrivadas || '');
+        setError(null);
+      })
+      .catch((err) => {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Error al cargar la ficha de la clienta.'
+        );
+      });
+  };
 
   const handleGuardarNotas = async () => {
     if (!clientaId) return;
@@ -172,15 +193,43 @@ export function FichaClientaDialog({
     <Dialog open={abierto} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto border-white/10 bg-[#1A1209] text-white p-6 rounded-[16px] space-y-5">
         {cargando && (
-          <div className="py-16 flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="size-8 text-[var(--primary)] animate-spin" />
-            <p className="text-sm text-white/60">Cargando ficha de clienta...</p>
+          <div className="space-y-6 animate-pulse py-2" aria-label="Cargando ficha de clienta...">
+            <div className="flex items-center gap-3">
+              <div className="size-12 rounded-full bg-white/10 shrink-0" />
+              <div className="space-y-2 flex-1">
+                <div className="h-5 w-48 bg-white/10 rounded" />
+                <div className="h-3 w-64 bg-white/10 rounded" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-20 rounded-xl bg-white/5 border border-white/5" />
+              ))}
+            </div>
+            <div className="h-28 rounded-xl bg-white/5 border border-white/5" />
+            <div className="space-y-2">
+              <div className="h-4 w-32 bg-white/10 rounded" />
+              <div className="h-16 rounded-xl bg-white/5 border border-white/5" />
+            </div>
           </div>
         )}
 
         {error && (
-          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-300">
-            {error}
+          <div className="p-6 rounded-xl bg-red-500/10 border border-red-500/20 text-center space-y-3">
+            <AlertCircle className="size-8 text-red-400 mx-auto" />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-white">Error al cargar la ficha</p>
+              <p className="text-xs text-red-200/70">{error}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReintentar}
+              className="text-xs border-red-400/30 text-red-200 hover:bg-red-500/20"
+            >
+              <RefreshCw className="size-3.5 mr-1.5" />
+              Reintentar
+            </Button>
           </div>
         )}
 

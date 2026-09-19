@@ -37,13 +37,34 @@ async function request<T>(
     headers.set('Accept', 'application/json');
   }
 
-  const response = await fetch(url, {
-    ...init,
-    method,
-    headers,
-    credentials: 'include',
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...init,
+      method,
+      headers,
+      credentials: 'include',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  } catch (err) {
+    if (err instanceof ApiError) {
+      throw err;
+    }
+    const esOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+    const esErrorRed =
+      err instanceof TypeError ||
+      (err instanceof Error &&
+        (err.name === 'TypeError' ||
+          err.message.includes('fetch') ||
+          err.message.includes('Network')));
+
+    if (esOffline || esErrorRed) {
+      throw new Error(
+        'No se pudo conectar con el servidor. Verificá tu conexión a internet.'
+      );
+    }
+    throw err;
+  }
 
   if (!response.ok) {
     let errorPayload: ApiErrorPayload = {

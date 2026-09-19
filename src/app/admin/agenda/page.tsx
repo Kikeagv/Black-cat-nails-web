@@ -29,7 +29,7 @@ import {
   CitaDetallePanel,
   NuevaCitaManualModal,
 } from '@/components/admin/agenda';
-import { AlertCircle, RefreshCw, Loader2 } from 'lucide-react';
+import { AlertCircle, RefreshCw, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function AdminAgendaPage() {
@@ -148,11 +148,84 @@ export default function AdminAgendaPage() {
       {/* 3. Área de trabajo: Grilla semanal (izquierda) + Panel lateral de detalle (derecha) */}
       <div className="flex flex-col lg:flex-row gap-6 items-start w-full">
         {/* Grilla Semanal */}
-        <div className="flex-1 min-w-0 w-full">
+        {/* Grilla Semanal */}
+        <div className="flex-1 min-w-0 w-full space-y-4">
+          {!cargando && citasSemana.length === 0 && (
+            <div className="p-4 rounded-xl border border-white/10 bg-white/3 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[var(--accent)] shrink-0">
+                  <Calendar className="size-4" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">
+                    No hay citas programadas para esta semana
+                  </p>
+                  <p className="text-xs text-white/50">
+                    Podés agendar una cita manualmente para cualquier horario disponible.
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => setModalManualAbierto(true)}
+                className="text-xs bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 shrink-0 font-medium"
+              >
+                + Nueva cita
+              </Button>
+            </div>
+          )}
+
           {cargando && citas.length === 0 ? (
-            <div className="bg-white/4 border border-white/10 rounded-2xl p-12 flex flex-col items-center justify-center text-center min-h-[500px]">
-              <Loader2 className="size-8 animate-spin text-[#E070C4] mb-3" />
-              <p className="text-white/60 text-sm">Cargando agenda semanal...</p>
+            <div className="bg-white/4 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 overflow-x-auto min-w-0 w-full animate-pulse shadow-inner">
+              <div className="min-w-[680px]">
+                {/* Cabecera de 7 días */}
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-[50px] shrink-0" />
+                  {[...Array(7)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 flex flex-col items-center py-2 px-1 rounded-lg bg-white/5 space-y-1"
+                    >
+                      <div className="h-3 w-8 bg-white/10 rounded" />
+                      <div className="h-6 w-6 bg-white/10 rounded" />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Grilla con bloques simulados */}
+                <div className="flex gap-2 relative h-[520px]">
+                  <div className="w-[50px] shrink-0 flex flex-col justify-between py-2 pr-2">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="h-3 w-8 bg-white/10 rounded ml-auto" />
+                    ))}
+                  </div>
+                  {[...Array(7)].map((_, colIdx) => (
+                    <div
+                      key={colIdx}
+                      className="flex-1 rounded-xl border border-white/5 bg-white/[0.02] p-2 relative flex flex-col gap-3"
+                    >
+                      {colIdx % 2 === 0 && (
+                        <div
+                          className="w-full rounded-lg bg-white/10 p-2 space-y-1"
+                          style={{ height: `${70 + ((colIdx * 23) % 90)}px` }}
+                        >
+                          <div className="h-3 w-2/3 bg-white/10 rounded" />
+                          <div className="h-2 w-1/2 bg-white/10 rounded" />
+                        </div>
+                      )}
+                      {colIdx % 3 === 1 && (
+                        <div
+                          className="w-full rounded-lg bg-white/10 p-2 space-y-1 mt-6"
+                          style={{ height: '80px' }}
+                        >
+                          <div className="h-3 w-3/4 bg-white/10 rounded" />
+                          <div className="h-2 w-1/3 bg-white/10 rounded" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : (
             <AgendaGrid

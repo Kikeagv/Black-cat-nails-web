@@ -45,20 +45,11 @@ import { toast } from 'sonner';
 import { ServicioFormDialog } from '@/components/admin/servicios/ServicioFormDialog';
 import { DesactivarConfirmDialog } from '@/components/admin/servicios/DesactivarConfirmDialog';
 
-// Insumos base como fallback defensivo si la API aún no los sirve
-const INSUMOS_FALLBACK: Insumo[] = [
-  { id: 'ins_1', nombre: 'Acrílico en polvo', unidad: 'g', existencia: 450, minimo: 200, costo: 0.08 },
-  { id: 'ins_2', nombre: 'Removedor de uñas', unidad: 'ml', existencia: 40, minimo: 100, costo: 0.05 },
-  { id: 'ins_3', nombre: 'Tips para uñas', unidad: 'unidad', existencia: 180, minimo: 100, costo: 0.1 },
-  { id: 'ins_4', nombre: 'Gel constructor', unidad: 'g', existencia: 250, minimo: 100, costo: 0.15 },
-  { id: 'ins_5', nombre: 'Esmalte semipermanente', unidad: 'ml', existencia: 120, minimo: 100, costo: 0.2 },
-];
-
 export default function AdminServiciosPage() {
   const { servicios, cargando, error, alternarActivo, cargarServicios } = useCatalogo();
 
-  // Estados locales para insumos disponibles
-  const [insumos, setInsumos] = useState<Insumo[]>(INSUMOS_FALLBACK);
+  // Estados locales para insumos disponibles desde la API de inventario
+  const [insumos, setInsumos] = useState<Insumo[]>([]);
 
   // Estados para diálogos
   const [dialogoFormAbierto, setDialogoFormAbierto] = useState(false);
@@ -74,17 +65,21 @@ export default function AdminServiciosPage() {
 
   // Cargar insumos para el formulario
   useEffect(() => {
-    async function cargarInsumos() {
-      try {
-        const datos = await insumosService.listar();
-        if (Array.isArray(datos) && datos.length > 0) {
+    let activo = true;
+    insumosService
+      .listar()
+      .then((datos) => {
+        if (activo && Array.isArray(datos)) {
           setInsumos(datos);
         }
-      } catch {
-        // Mantiene INSUMOS_FALLBACK silenciosamente si la API de insumos aún no está activa
-      }
-    }
-    cargarInsumos();
+      })
+      .catch(() => {
+        // En caso de fallo de red de insumos, se mantiene el catálogo de insumos vacío
+      });
+
+    return () => {
+      activo = false;
+    };
   }, []);
 
   // Métricas rápidas

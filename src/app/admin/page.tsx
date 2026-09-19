@@ -68,7 +68,6 @@ export default function AdminDashboardPage() {
       const res = await dashboardService.obtenerDatos(fecha);
       setDatos(res);
     } catch (err) {
-      console.error('Error al cargar dashboard:', err);
       setError(
         err instanceof Error
           ? err.message

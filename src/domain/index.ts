@@ -3,3 +3,4 @@ export * from './estadosCita';
 export * from './inventario';
 export * from './agendaSemanal';
 export * from './indicadores';
+export * from './clientas';

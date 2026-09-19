@@ -2,16 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db';
 import { handleAuthError, requireRol } from '@/server/session';
 import { Usuaria } from '@/types';
+import { calcularMetricasClienta, ClientaConMetricas } from '@/domain/clientas';
 
 /**
  * GET /api/clientas (Exclusivo Admin)
- * Retorna la lista de clientas registradas en el sistema (sin hash de contraseña).
+ * Retorna la lista de clientas con filtros (todas, activas, con_inasistencias) y métricas calculadas.
  */
-export async function GET(request?: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     await requireRol('admin', request);
 
-    const clientas: Usuaria[] = db.usuarias
+    const url = new URL(request.url);
+    const busqueda = (url.searchParams.get('q') || '').trim().toLowerCase();
+    const filtro = url.searchParams.get('filtro') || 'todas';
+
+    const todasClientas: Usuaria[] = db.usuarias
       .list({ rol: 'clienta' })
       .map((u) => ({
         id: u.id,
@@ -24,10 +29,38 @@ export async function GET(request?: NextRequest) {
         creadaEn: u.creadaEn,
       }));
 
-    // Ordenar alfabéticamente por nombre
-    clientas.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    const todasCitas = db.citas.list();
 
-    return NextResponse.json(clientas, { status: 200 });
+    let resultado: ClientaConMetricas[] = todasClientas.map((clienta) => {
+      const citasClienta = todasCitas.filter((c) => c.clientaId === clienta.id);
+      const metricas = calcularMetricasClienta(clienta, citasClienta);
+      return {
+        ...clienta,
+        metricas,
+      };
+    });
+
+    // Filtro por texto de búsqueda
+    if (busqueda) {
+      resultado = resultado.filter(
+        (c) =>
+          c.nombre.toLowerCase().includes(busqueda) ||
+          c.correo.toLowerCase().includes(busqueda) ||
+          c.telefono.toLowerCase().includes(busqueda)
+      );
+    }
+
+    // Filtro por categoría de estado
+    if (filtro === 'activas') {
+      resultado = resultado.filter((c) => c.metricas.esActiva);
+    } else if (filtro === 'con_inasistencias') {
+      resultado = resultado.filter((c) => c.metricas.inasistencias > 0);
+    }
+
+    // Ordenar alfabéticamente por nombre
+    resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    return NextResponse.json(resultado, { status: 200 });
   } catch (error) {
     const authResponse = handleAuthError(error);
     if (authResponse) {

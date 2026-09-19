@@ -2,54 +2,90 @@
 
 Sistema web para el salón de manicura y estética **Black Cat Nails by Vante**, desarrollado como proyecto de cátedra para la asignatura **DPS941 (Diseño y Programación de Software Multiplataforma)** en la **Universidad Don Bosco**.
 
-## Enlace del despliegue (Vercel)
+---
 
-- **URL de Producción**: `https://black-cat-nails-web.vercel.app` (o la URL asignada a tu proyecto en Vercel)
-- Conectado automáticamente al repositorio de GitHub: [`Kikeagv/Black-cat-nails-web`](https://github.com/Kikeagv/Black-cat-nails-web) con despliegues automáticos ante cada push a `main`.
+## Integrantes
+
+- **Enrique Alejandro García Villeda**
+
+---
+
+## Enlace del Despliegue
+
+- **URL de Producción**: [https://black-cat-nails-web.vercel.app](https://black-cat-nails-web.vercel.app)
+- **Repositorio en GitHub**: [Kikeagv/Black-cat-nails-web](https://github.com/Kikeagv/Black-cat-nails-web)
+
+---
+
+## Features del Proyecto
+
+- **Autenticación y Seguridad (RF-01)**: Registro e inicio de sesión con JWT en cookie `httpOnly`, validaciones Zod, contraseñas con `bcryptjs` y control de acceso por roles (`clienta` y `admin`).
+- **Portal de la Clienta (RF-02, RF-03, RF-05)**:
+  - Próxima cita destacada y catálogo interactivo de servicios con filtros por categoría (`/app`).
+  - Flujo de agendamiento en 3 pasos con cálculo de disponibilidad horaria en vivo (`/app/agendar`).
+  - Mis Citas: visualización de citas próximas e historial, confirmación y cancelación con validación de 12 horas (`/app/citas`).
+- **Dashboard Administrativo (RF-04)**: Tarjetas KPI, gráfica de ingresos semanales con Recharts, agenda del día y panel de alertas operativas (`/admin`).
+- **Agenda Semanal (RF-03, RF-05)**: Vista semanal interactiva de 7 columnas, detalle de cita con cambio de estados y modal de nueva cita manual (`/admin/agenda`).
+- **Gestión de Servicios (RF-02)**: CRUD completo de servicios con duración, precio, ciclo de retorno y consumos de insumos (`/admin/servicios`).
+- **Inventario e Insumos (RF-06)**: Control de existencias contra mínimo de seguridad, barra de progreso con semáforo de criticidad, rendimiento en clientas atendibles y registro de compras (`/admin/inventario`).
+- **Directorio de Clientas (RF-07)**: Búsqueda en vivo, filtros (todas, activas 60d, con inasistencias), alerta visual de ausentismo ($\ge 2$ inasistencias) y ficha modal con historial y notas privadas editables (`/admin/clientas`).
+- **Diseño, Resiliencia y UX**: Esqueletos de carga según la forma del contenido, estados vacíos con acciones claras, manejo de errores con reintento, diseño adaptable a 360 px, 768 px y 1440 px, y resiliencia ante desconexión de red.
+
+---
+
+## Cómo Ejecutar el Proyecto
+
+### Prerrequisitos
+
+- **Node.js**: v20 o superior
+- **npm**: v10 o superior
+
+### Instalación y Ejecución
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone git@github.com:Kikeagv/Black-cat-nails-web.git
+   cd Black-cat-nails-web
+   ```
+
+2. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
+
+3. **Configurar variables de entorno:**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Iniciar el servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
+   Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
+
+### Credenciales de Prueba (Seed)
+
+| Rol | Correo | Contraseña |
+| --- | --- | --- |
+| **Administradora** | `vante@blackcatnails.sv` | `Password123` |
+| **Clienta** | `camila@mail.com` | `Password123` |
+
+### Scripts Útiles
+
+```bash
+npm run dev        # Servidor de desarrollo
+npm run build      # Construcción para producción
+npm run lint       # Linter de código (ESLint)
+npx tsc --noEmit   # Verificación estricta de tipos de TypeScript
+```
 
 ---
 
 ## Stack Tecnológico
 
-- **Framework**: Next.js 16 (App Router, React 19, Server Components)
-- **Lenguaje**: TypeScript en modo estricto
-- **Estilos**: Tailwind CSS v4 + componentes basados en shadcn/ui
-- **Validación**: Zod (esquemas compartidos entre cliente y servidor)
-- **Comunicación**: API REST (Route Handlers en `/api/*` consumidos exclusivamente vía `src/services/http.ts`)
-- **Autenticación**: Sesión en servidor con cookie `httpOnly`, token JWT firmado con `jose` y contraseñas con `bcryptjs`
-- **Persistencia**: Repositorio en memoria (`src/server/db.ts`) inicializado con datos semilla (`src/data/seed.json`)
-
----
-
-## Variables de Entorno
-
-El proyecto incluye el archivo `.env.example` como plantilla. En desarrollo local o en el panel de Vercel se deben configurar las siguientes variables:
-
-```bash
-SESSION_SECRET=55f2899aad40c4a7c460e71ee38b177f3872a44064c7e5c1dfe165edd253ca7e
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=
-```
-
-> **Importante**: Nunca subas archivos `.env` o `.env.local` al repositorio. `.gitignore` está configurado para excluir todas las variantes de `.env*` salvo `.env.example`.
-
----
-
-## Nota sobre Persistencia y Entorno Serverless (Vercel)
-
-El módulo `src/server/db.ts` gestiona los datos de la aplicación en memoria del proceso a partir de `src/data/seed.json`.
-
-En entornos de ejecución serverless como Vercel, las instancias de ejecución (lambdas) son efímeras y se destruyen o reinician ante inactividad o nuevos despliegues. Cualquier mutación efectuada durante la ejecución (creación de citas, registros, cambios de estado o insumos) persistirá únicamente durante el ciclo de vida de la instancia activa en caliente y se restaurará al estado inicial de `seed.json` tras el reciclado de la función.
-
-Esta es una **limitación arquitectónica conocida y aceptada para la Etapa 2**. En la Etapa 3 del proyecto, este repositorio en memoria y los servicios correspondientes serán sustituidos por **Google Cloud Firestore**.
-
----
-
-## Scripts Disponibles
-
-```bash
-npm run dev        # Inicia el servidor de desarrollo
-npm run build      # Construye la aplicación optimizada para producción
-npx tsc --noEmit   # Verificación estricta de tipos de TypeScript
-npm run lint       # Ejecuta ESLint
-```
+- **Framework**: Next.js 16 (App Router, Turbopack, React 19)
+- **Lenguaje**: TypeScript (Strict Mode)
+- **Estilos**: Tailwind CSS v4 + componentes accesibles tipo shadcn/ui
+- **Validación y Utilidades**: Zod, date-fns, lucide-react, sonner
+- **Persistencia**: Repositorio en memoria inicializado con `seed.json` (diseñado para migración a Cloud Firestore en Etapa 3)

@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { crearServicioSchema, CrearServicioInput } from '@/schemas/servicio';
 import { Insumo, Servicio } from '@/types';
 import { useCatalogo } from '@/context/CatalogoContext';
@@ -75,7 +77,6 @@ export function ServicioFormDialog({
       duracionMin: 45,
       cicloRetornoDias: 21,
       activo: true,
-      imagenUrl: '',
       consumos: [],
     },
   });
@@ -96,7 +97,6 @@ export function ServicioFormDialog({
           duracionMin: servicioAEditar.duracionMin,
           cicloRetornoDias: servicioAEditar.cicloRetornoDias,
           activo: servicioAEditar.activo,
-          imagenUrl: servicioAEditar.imagenUrl || '',
           consumos: servicioAEditar.consumos || [],
         });
       } else {
@@ -107,7 +107,6 @@ export function ServicioFormDialog({
           duracionMin: 45,
           cicloRetornoDias: 21,
           activo: true,
-          imagenUrl: '',
           consumos: [],
         });
       }
@@ -206,24 +205,35 @@ export function ServicioFormDialog({
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-white/90">
+            <Field data-invalid={Boolean(errors.categoria)} className="gap-1.5">
+              <FieldLabel
+                htmlFor="servicio-categoria"
+                className="text-xs font-semibold text-white/90"
+              >
                 Categoría *
-              </label>
-              <select
+              </FieldLabel>
+              <NativeSelect
+                id="servicio-categoria"
+                aria-invalid={Boolean(errors.categoria)}
+                aria-describedby={
+                  errors.categoria ? 'servicio-categoria-error' : undefined
+                }
                 {...register('categoria')}
-                className="w-full h-10 rounded-md border border-white/15 bg-black/40 px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--primary)]"
+                className="w-full"
               >
                 {CATEGORIAS_SERVICIO.map((cat) => (
-                  <option key={cat} value={cat} className="bg-[#1E1610] text-white">
+                  <NativeSelectOption key={cat} value={cat}>
                     {cat}
-                  </option>
+                  </NativeSelectOption>
                 ))}
-              </select>
-              {errors.categoria && (
-                <p className="text-xs text-red-400">{errors.categoria.message}</p>
-              )}
-            </div>
+              </NativeSelect>
+              <FieldError
+                id="servicio-categoria-error"
+                className="text-xs text-red-400"
+              >
+                {errors.categoria?.message}
+              </FieldError>
+            </Field>
           </div>
 
           {/* Fila 2: Precio, Duración y Ciclo de retorno */}
@@ -233,7 +243,12 @@ export function ServicioFormDialog({
                 Precio (USD) *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-sm text-white/50">$</span>
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 left-3 z-10 flex items-center text-sm leading-none text-white/50"
+                >
+                  $
+                </span>
                 <Input
                   type="number"
                   step="0.01"
@@ -286,33 +301,17 @@ export function ServicioFormDialog({
             </div>
           </div>
 
-          {/* Fila 3: URL de imagen y Estado */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-            <div className="sm:col-span-2 space-y-1.5">
-              <label className="text-xs font-semibold text-white/90">
-                URL de imagen (opcional)
-              </label>
-              <Input
-                {...register('imagenUrl')}
-                placeholder="https://... o /images/servicios/..."
-                className="bg-black/20 border-white/15 text-sm"
-              />
-              {errors.imagenUrl && (
-                <p className="text-xs text-red-400">{errors.imagenUrl.message}</p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2 p-2.5 bg-black/20 rounded-md border border-white/10 h-10">
-              <input
-                type="checkbox"
-                id="activo-check"
-                {...register('activo')}
-                className="size-4 accent-[var(--primary)] rounded cursor-pointer"
-              />
-              <label htmlFor="activo-check" className="text-xs text-white/90 cursor-pointer select-none">
-                Disponible en catálogo
-              </label>
-            </div>
+          {/* Disponibilidad del servicio */}
+          <div className="flex items-center gap-2 p-2.5 bg-black/20 rounded-md border border-white/10 h-10 w-fit">
+            <input
+              type="checkbox"
+              id="activo-check"
+              {...register('activo')}
+              className="size-4 accent-[var(--primary)] rounded cursor-pointer"
+            />
+            <label htmlFor="activo-check" className="text-xs text-white/90 cursor-pointer select-none">
+              Disponible en catálogo
+            </label>
           </div>
 
           {/* Sección de Insumos Consumidos */}
@@ -351,20 +350,22 @@ export function ServicioFormDialog({
                     >
                       {/* Selector de Insumo */}
                       <div className="flex-1">
-                        <select
+                        <NativeSelect
+                          size="sm"
+                          className="w-full"
+                          selectClassName="text-xs"
+                          aria-label={`Insumo para consumo ${index + 1}`}
                           {...register(`consumos.${index}.insumoId`)}
-                          className="w-full h-8 rounded border border-white/15 bg-black/60 px-2 text-xs text-white focus:outline-none"
                         >
                           {insumosDisponibles.map((ins) => (
-                            <option
+                            <NativeSelectOption
                               key={ins.id}
                               value={ins.id}
-                              className="bg-[#1E1610] text-white"
                             >
                               {ins.nombre} ({ins.unidad})
-                            </option>
+                            </NativeSelectOption>
                           ))}
-                        </select>
+                        </NativeSelect>
                       </div>
 
                       {/* Input de Cantidad */}

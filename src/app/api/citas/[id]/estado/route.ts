@@ -17,7 +17,7 @@ interface RouteContext {
  * - 200: Cita actualizada
  * - 400: Validación fallida del cuerpo
  * - 401: Sin sesión
- * - 403: Intento de transición restringida a admin o acceso a cita ajena
+ * - 403: Transición no permitida para la clienta o acceso a cita ajena
  * - 404: Cita inexistente
  * - 422: Transición inválida en la máquina de estados o cancelación fuera de tiempo
  */

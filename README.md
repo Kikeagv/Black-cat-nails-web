@@ -23,7 +23,7 @@ Sistema web para el salón de manicura y estética **Black Cat Nails by Vante**,
 - **Portal de la Clienta (RF-02, RF-03, RF-05)**:
   - Próxima cita destacada y catálogo interactivo de servicios con filtros por categoría (`/app`).
   - Flujo de agendamiento en 3 pasos con cálculo de disponibilidad horaria en vivo (`/app/agendar`).
-  - Mis Citas: visualización de citas próximas e historial, confirmación y cancelación con validación de 12 horas (`/app/citas`).
+  - Mis Citas: reservas confirmadas al crearse, con visualización de próximas citas e historial y cancelación sujeta a 12 horas de anticipación (`/app/citas`).
 - **Dashboard Administrativo (RF-04)**: Tarjetas KPI, gráfica de ingresos semanales con Recharts, agenda del día y panel de alertas operativas (`/admin`).
 - **Agenda Semanal (RF-03, RF-05)**: Vista semanal interactiva de 7 columnas, detalle de cita con cambio de estados y modal de nueva cita manual (`/admin/agenda`).
 - **Gestión de Servicios (RF-02)**: CRUD completo de servicios con duración, precio, ciclo de retorno y consumos de insumos (`/admin/servicios`).

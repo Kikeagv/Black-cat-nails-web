@@ -5,7 +5,6 @@
  *
  * Módulo administrativo de inventario con diseño inspirado en la Figura 6:
  * - Tabla completa: insumo, existencia, mínimo, progreso vs mínimo, rendimiento en clientas y estado.
- * - Tarjetas de métricas rápidas (total insumos, críticos, bajo stock, óptimos y valoración económica).
  * - Barra de progreso visual contra el nivel mínimo con código de color.
  * - Cálculo de rendimiento en clientas atendibles según consumos de servicios activos.
  * - Diálogos para crear, editar insumos y registrar compras sumando stock.
@@ -22,9 +21,7 @@ import {
   Plus,
   Pencil,
   ShoppingBag,
-  Search,
   RefreshCw,
-  DollarSign,
   Users,
 } from 'lucide-react';
 import { useInventario } from '@/context/InventarioContext';
@@ -33,7 +30,7 @@ import { EstadoInsumo, Insumo } from '@/types';
 import { calcularRendimientoClientas } from '@/domain/inventario';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { SearchInput } from '@/components/ui/search-input';
 import { Card } from '@/components/ui/card';
 import {
   Table,
@@ -64,25 +61,15 @@ export default function AdminInventarioPage() {
   const [busqueda, setBusqueda] = useState('');
   const [filtroEstado, setFiltroEstado] = useState<'todos' | EstadoInsumo>('todos');
 
-  // Métricas rápidas de cabecera
-  const metricas = useMemo(() => {
-    const total = insumos.length;
-    const criticos = insumos.filter((i) => i.estado === 'critico').length;
-    const bajos = insumos.filter((i) => i.estado === 'bajo').length;
-    const optimos = insumos.filter((i) => i.estado === 'ok').length;
-    const valorTotalUSD = insumos.reduce(
-      (acc, i) => acc + (i.existencia || 0) * (i.costo || 0),
-      0
-    );
-
-    return {
-      total,
-      criticos,
-      bajos,
-      optimos,
-      valorTotalUSD: Number(valorTotalUSD.toFixed(2)),
-    };
-  }, [insumos]);
+  // Conteos usados por los filtros del inventario.
+  const conteosEstado = useMemo(
+    () => ({
+      criticos: insumos.filter((i) => i.estado === 'critico').length,
+      bajos: insumos.filter((i) => i.estado === 'bajo').length,
+      optimos: insumos.filter((i) => i.estado === 'ok').length,
+    }),
+    [insumos]
+  );
 
   // Filtrado de insumos
   const insumosFiltrados = useMemo(() => {
@@ -118,22 +105,9 @@ export default function AdminInventarioPage() {
     <div className="space-y-6 max-w-6xl pb-10">
       {/* 1. Encabezado principal */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-display-32 font-serif text-white">
-              Inventario e Insumos
-            </h1>
-            <Badge
-              variant="outline"
-              className="border-white/10 text-[var(--accent)] text-xs font-mono"
-            >
-              RF-06
-            </Badge>
-          </div>
-          <p className="text-sm text-[var(--accent)]">
-            Control de existencias, mínimos de seguridad, rendimiento y compras de insumos
-          </p>
-        </div>
+        <h1 className="text-display-32 font-serif text-white">
+          Inventario e Insumos
+        </h1>
 
         <div className="flex items-center gap-2">
           <Button
@@ -160,82 +134,16 @@ export default function AdminInventarioPage() {
         </div>
       </div>
 
-      {/* 2. Tarjetas de métricas rápidas (Estilo Figura 6) */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-        {/* Total Insumos */}
-        <Card className="p-4 rounded-[16px] border border-white/8 bg-card/60 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-white/60">
-            <span className="text-xs font-medium">Total Insumos</span>
-            <Package className="size-4 text-[var(--accent)]" />
-          </div>
-          <div className="text-2xl font-bold text-white">
-            {cargando ? '—' : metricas.total}
-          </div>
-          <p className="text-[11px] text-white/40">Materias primas registradas</p>
-        </Card>
-
-        {/* Críticos */}
-        <Card className="p-4 rounded-[16px] border border-red-500/20 bg-red-500/5 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-red-300">
-            <span className="text-xs font-medium">Bajo Mínimo</span>
-            <AlertCircle className="size-4 text-red-400" />
-          </div>
-          <div className="text-2xl font-bold text-red-400">
-            {cargando ? '—' : metricas.criticos}
-          </div>
-          <p className="text-[11px] text-red-300/70">Requieren compra urgente</p>
-        </Card>
-
-        {/* Próximo a agotarse / Bajo */}
-        <Card className="p-4 rounded-[16px] border border-amber-500/20 bg-amber-500/5 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-amber-300">
-            <span className="text-xs font-medium">Bajo Stock</span>
-            <AlertTriangle className="size-4 text-amber-400" />
-          </div>
-          <div className="text-2xl font-bold text-amber-400">
-            {cargando ? '—' : metricas.bajos}
-          </div>
-          <p className="text-[11px] text-amber-300/70">Entre 100% y 150% del mín.</p>
-        </Card>
-
-        {/* Óptimos */}
-        <Card className="p-4 rounded-[16px] border border-emerald-500/20 bg-emerald-500/5 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-emerald-300">
-            <span className="text-xs font-medium">Stock Óptimo</span>
-            <CheckCircle2 className="size-4 text-emerald-400" />
-          </div>
-          <div className="text-2xl font-bold text-emerald-400">
-            {cargando ? '—' : metricas.optimos}
-          </div>
-          <p className="text-[11px] text-emerald-300/70">Por encima de seguridad</p>
-        </Card>
-
-        {/* Valor Total Inventario */}
-        <Card className="p-4 rounded-[16px] border border-white/8 bg-card/60 backdrop-blur space-y-2 col-span-2 md:col-span-1">
-          <div className="flex items-center justify-between text-white/60">
-            <span className="text-xs font-medium">Valor Total</span>
-            <DollarSign className="size-4 text-[var(--primary)]" />
-          </div>
-          <div className="text-2xl font-bold text-white">
-            {cargando ? '—' : `$${metricas.valorTotalUSD.toFixed(2)}`}
-          </div>
-          <p className="text-[11px] text-white/40">Existencias × costo</p>
-        </Card>
-      </div>
-
-      {/* 3. Filtros y Búsqueda */}
+      {/* 2. Filtros y búsqueda */}
       <Card className="p-4 rounded-[16px] border border-white/8 bg-card/60 backdrop-blur space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Campo de búsqueda */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-2.5 size-4 text-white/40" />
-            <Input
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar por nombre o unidad de medida..."
-              className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-[var(--primary)] text-sm"
-            />
-          </div>
+          <SearchInput
+            containerClassName="flex-1 max-w-md"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar por nombre o unidad de medida..."
+          />
 
           {/* Filtro por estado del semáforo */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
@@ -262,7 +170,7 @@ export default function AdminInventarioPage() {
                   : 'border-white/10 text-red-300/70 hover:bg-red-500/10'
               }`}
             >
-              Críticos ({metricas.criticos})
+              Críticos ({conteosEstado.criticos})
             </Button>
             <Button
               variant={filtroEstado === 'bajo' ? 'default' : 'outline'}
@@ -274,7 +182,7 @@ export default function AdminInventarioPage() {
                   : 'border-white/10 text-amber-300/70 hover:bg-amber-500/10'
               }`}
             >
-              Bajo stock ({metricas.bajos})
+              Bajo stock ({conteosEstado.bajos})
             </Button>
             <Button
               variant={filtroEstado === 'ok' ? 'default' : 'outline'}
@@ -286,13 +194,13 @@ export default function AdminInventarioPage() {
                   : 'border-white/10 text-emerald-300/70 hover:bg-emerald-500/10'
               }`}
             >
-              Óptimos ({metricas.optimos})
+              Óptimos ({conteosEstado.optimos})
             </Button>
           </div>
         </div>
       </Card>
 
-      {/* 4. Estado de error con botón de reintentar */}
+      {/* 3. Estado de error con botón de reintentar */}
       {error && (
         <Card className="p-6 rounded-[16px] border border-red-500/30 bg-red-500/10 space-y-3">
           <div className="flex items-center gap-2 text-red-400 font-medium">
@@ -312,8 +220,8 @@ export default function AdminInventarioPage() {
         </Card>
       )}
 
-      {/* 5. Tabla principal de insumos */}
-      <Card className="rounded-[16px] border border-white/8 bg-card/60 backdrop-blur overflow-hidden">
+      {/* 4. Tabla principal de insumos */}
+      <Card className="rounded-[16px] border border-white/8 bg-card/60 backdrop-blur overflow-hidden py-0">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-white/3 border-b border-white/8">

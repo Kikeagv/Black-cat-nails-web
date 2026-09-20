@@ -74,12 +74,12 @@ function RegistroForm() {
 
   return (
     <div className="w-full max-w-[420px] mx-auto bg-card/60 backdrop-blur border border-white/10 rounded-[32px] p-8 sm:p-10 shadow-2xl flex flex-col justify-between">
-      {/* Header con logotipo y tipografía según Figma */}
+      {/* Encabezado de marca */}
       <div className="flex flex-col items-center gap-3 text-center mb-6">
         <div className="relative size-24 drop-shadow-md">
           <Image
             src="/logo.svg"
-            alt="Black Cat Nails Logo"
+            alt="Logo de Black Cat Nails"
             fill
             className="object-contain"
             priority
@@ -89,9 +89,6 @@ function RegistroForm() {
           <h1 className="text-display-32 text-white font-serif tracking-tight">
             Crear cuenta
           </h1>
-          <p className="text-xs text-white/60 mt-1">
-            Black Cat Nails by Vante
-          </p>
         </div>
       </div>
 

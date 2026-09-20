@@ -30,15 +30,6 @@ export function AlertasSection({
           href: '/admin/inventario',
           destino: 'Ver inventario',
         };
-      case 'cita_sin_confirmar':
-        return {
-          titulo: 'Cita sin confirmar',
-          icono: AlertCircle,
-          bgIcono: 'bg-yellow-500/15 text-yellow-300',
-          textColor: 'text-yellow-300',
-          href: '/admin/agenda',
-          destino: 'Ver agenda',
-        };
       case 'retoque_pendiente':
         return {
           titulo: 'Retoque pendiente',
@@ -125,7 +116,7 @@ export function AlertasSection({
             No hay alertas operativas
           </p>
           <p className="text-xs text-white/50">
-            Insumos en niveles óptimos, citas confirmadas y sin retoques vencidos.
+            Sin alertas de inventario ni retoques pendientes.
           </p>
         </div>
       ) : (

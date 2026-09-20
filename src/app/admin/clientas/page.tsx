@@ -11,14 +11,11 @@
  *   total gastado y notas privadas editables por la admin.
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Users,
-  Search,
   RefreshCw,
   AlertTriangle,
-  CheckCircle2,
-  DollarSign,
   Eye,
   Mail,
   Phone,
@@ -26,7 +23,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { SearchInput } from '@/components/ui/search-input';
 import { Card } from '@/components/ui/card';
 import {
   Table,
@@ -111,30 +108,6 @@ export default function AdminClientasPage() {
     };
   }, [busqueda, filtroEstado]);
 
-  // Métricas rápidas de cabecera (Figura 6)
-  const metricasResumen = useMemo(() => {
-    const total = clientas.length;
-    const activas = clientas.filter((c) => c.metricas.esActiva).length;
-    const conInasistencias = clientas.filter(
-      (c) => c.metricas.inasistencias > 0
-    ).length;
-    const enRiesgo = clientas.filter(
-      (c) => c.metricas.alertaInasistencias
-    ).length;
-    const totalFacturado = clientas.reduce(
-      (acc, c) => acc + (c.metricas.totalGastado || 0),
-      0
-    );
-
-    return {
-      total,
-      activas,
-      conInasistencias,
-      enRiesgo,
-      totalFacturado: Number(totalFacturado.toFixed(2)),
-    };
-  }, [clientas]);
-
   const handleAbrirFicha = (id: string) => {
     setClientaSeleccionadaId(id);
     setDialogoFichaAbierto(true);
@@ -144,22 +117,9 @@ export default function AdminClientasPage() {
     <div className="space-y-6 max-w-6xl pb-10">
       {/* 1. Encabezado principal */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-display-32 font-serif text-white">
-              Gestión de Clientas
-            </h1>
-            <Badge
-              variant="outline"
-              className="border-white/10 text-[var(--accent)] text-xs font-mono"
-            >
-              RF-07
-            </Badge>
-          </div>
-          <p className="text-sm text-[var(--accent)]">
-            Directorio de clientas, historial de citas, preferencias y notas privadas
-          </p>
-        </div>
+        <h1 className="text-display-32 font-serif text-white">
+          Gestión de Clientas
+        </h1>
 
         <Button
           variant="outline"
@@ -175,82 +135,16 @@ export default function AdminClientasPage() {
         </Button>
       </div>
 
-      {/* 2. Tarjetas de métricas rápidas (Estilo Figura 6) */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-        {/* Total Clientas */}
-        <Card className="p-4 rounded-[16px] border border-white/8 bg-card/60 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-white/60">
-            <span className="text-xs font-medium">Total Clientas</span>
-            <Users className="size-4 text-[var(--primary)]" />
-          </div>
-          <div className="text-2xl font-bold text-white">
-            {cargando ? '—' : metricasResumen.total}
-          </div>
-          <p className="text-[11px] text-white/40">Registradas en el sistema</p>
-        </Card>
-
-        {/* Clientas Activas */}
-        <Card className="p-4 rounded-[16px] border border-emerald-500/20 bg-emerald-500/5 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-emerald-300">
-            <span className="text-xs font-medium">Activas</span>
-            <CheckCircle2 className="size-4 text-emerald-400" />
-          </div>
-          <div className="text-2xl font-bold text-emerald-400">
-            {cargando ? '—' : metricasResumen.activas}
-          </div>
-          <p className="text-[11px] text-emerald-300/70">Cita en últimos 60 días</p>
-        </Card>
-
-        {/* Con Inasistencias */}
-        <Card className="p-4 rounded-[16px] border border-amber-500/20 bg-amber-500/5 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-amber-300">
-            <span className="text-xs font-medium">Con Inasistencia</span>
-            <AlertTriangle className="size-4 text-amber-400" />
-          </div>
-          <div className="text-2xl font-bold text-amber-400">
-            {cargando ? '—' : metricasResumen.conInasistencias}
-          </div>
-          <p className="text-[11px] text-amber-300/70">Al menos 1 inasistencia</p>
-        </Card>
-
-        {/* En Riesgo (>= 2 inasistencias) */}
-        <Card className="p-4 rounded-[16px] border border-red-500/20 bg-red-500/5 backdrop-blur space-y-2">
-          <div className="flex items-center justify-between text-red-300">
-            <span className="text-xs font-medium">En Riesgo</span>
-            <AlertCircle className="size-4 text-red-400" />
-          </div>
-          <div className="text-2xl font-bold text-red-400">
-            {cargando ? '—' : metricasResumen.enRiesgo}
-          </div>
-          <p className="text-[11px] text-red-300/70">≥ 2 inasistencias</p>
-        </Card>
-
-        {/* Facturación acumulada */}
-        <Card className="p-4 rounded-[16px] border border-white/8 bg-card/60 backdrop-blur space-y-2 col-span-2 md:col-span-1">
-          <div className="flex items-center justify-between text-white/60">
-            <span className="text-xs font-medium">Gasto Acumulado</span>
-            <DollarSign className="size-4 text-[var(--accent)]" />
-          </div>
-          <div className="text-2xl font-bold text-white">
-            {cargando ? '—' : `$${metricasResumen.totalFacturado.toFixed(2)}`}
-          </div>
-          <p className="text-[11px] text-white/40">Total citas completadas</p>
-        </Card>
-      </div>
-
-      {/* 3. Barra de búsqueda y filtros tipo píldora */}
+      {/* 2. Barra de búsqueda y filtros tipo píldora */}
       <Card className="p-4 rounded-[16px] border border-white/8 bg-card/60 backdrop-blur space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Input de búsqueda */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-2.5 size-4 text-white/40" />
-            <Input
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar clienta por nombre, correo o teléfono..."
-              className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-[var(--primary)] text-sm"
-            />
-          </div>
+          <SearchInput
+            containerClassName="flex-1 max-w-md"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            placeholder="Buscar clienta por nombre, correo o teléfono..."
+          />
 
           {/* Filtros tipo píldora */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
@@ -295,7 +189,7 @@ export default function AdminClientasPage() {
         </div>
       </Card>
 
-      {/* 4. Estado de error */}
+      {/* 3. Estado de error */}
       {error && (
         <Card className="p-6 rounded-[16px] border border-red-500/30 bg-red-500/10 space-y-3">
           <div className="flex items-center gap-2 text-red-400 font-medium">
@@ -315,8 +209,8 @@ export default function AdminClientasPage() {
         </Card>
       )}
 
-      {/* 5. Tabla de clientas */}
-      <Card className="rounded-[16px] border border-white/8 bg-card/60 backdrop-blur overflow-hidden">
+      {/* 4. Tabla de clientas */}
+      <Card className="rounded-[16px] border border-white/8 bg-card/60 backdrop-blur overflow-hidden py-0">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-white/3 border-b border-white/8">
@@ -469,7 +363,7 @@ export default function AdminClientasPage() {
                       {/* Inasistencias con marca visible si >= 2 */}
                       <TableCell className="whitespace-nowrap">
                         {clienta.metricas.alertaInasistencias ? (
-                          <Badge className="bg-red-500/20 text-red-300 border border-red-500/40 text-xs font-semibold gap-1 animate-pulse">
+                          <Badge className="bg-red-500/20 text-red-300 border border-red-500/40 text-xs font-semibold gap-1">
                             <AlertTriangle className="size-3 text-red-400" />
                             {clienta.metricas.inasistencias} inasistencias (Riesgo)
                           </Badge>

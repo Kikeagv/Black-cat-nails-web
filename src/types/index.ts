@@ -37,7 +37,6 @@ export interface Servicio {
   duracionMin: number;        // múltiplo de 5, entre 10 y 240
   cicloRetornoDias: number;   // 0 o entre 7 y 90
   activo: boolean;
-  imagenUrl?: string;
   consumos: ConsumoInsumo[];
 }
 
@@ -62,7 +61,6 @@ export interface Cita {
   montoTotal: number;
   estado: EstadoCita;
   notas?: string;
-  imagenReferenciaUrl?: string;
   insumosDescontados?: ConsumoInsumo[];  // se llena al completar
   montoCobrado?: number;                 // se llena al completar
   fechaRetoque?: string;                 // se calcula al completar
@@ -113,9 +111,9 @@ export interface CitaAgendaHoy {
 }
 
 export interface AlertaDashboard {
-  tipo: 'insumo_bajo' | 'cita_sin_confirmar' | 'retoque_pendiente';
+  tipo: 'insumo_bajo' | 'retoque_pendiente';
   mensaje: string;
-  severidad: 'bajo' | 'medio' | 'critico';
+  severidad: 'bajo' | 'critico';
 }
 
 export interface IngresoSemanal {

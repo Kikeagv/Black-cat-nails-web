@@ -64,12 +64,12 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-[390px] mx-auto bg-card/60 backdrop-blur border border-white/10 rounded-[32px] p-8 sm:p-10 shadow-2xl flex flex-col justify-between">
-      {/* Header con logotipo y tipografía según Figma (Figura 1 / 2:26) */}
+      {/* Encabezado de marca según Figma (Figura 1 / 2:26) */}
       <div className="flex flex-col items-center gap-3 text-center mb-8">
         <div className="relative size-28 drop-shadow-md">
           <Image
             src="/logo.svg"
-            alt="Black Cat Nails Logo"
+            alt="Logo de Black Cat Nails"
             fill
             className="object-contain"
             priority

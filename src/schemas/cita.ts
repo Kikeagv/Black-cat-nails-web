@@ -22,7 +22,6 @@ export const crearCitaSchema = z.object({
     .max(300, 'Las notas no pueden superar 300 caracteres')
     .optional(),
   clientaId: z.string().min(1).optional(),
-  imagenReferenciaUrl: z.string().url('URL de imagen no válida').optional().or(z.literal('')),
 });
 
 export const cambiarEstadoCitaSchema = z.object({

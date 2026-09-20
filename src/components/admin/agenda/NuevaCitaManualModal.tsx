@@ -10,6 +10,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { Textarea } from '@/components/ui/textarea';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { useCatalogo } from '@/context/CatalogoContext';
 import { useAgenda } from '@/context/AgendaContext';
 import { clientasService } from '@/services/clientasService';
@@ -199,35 +202,38 @@ export function NuevaCitaManualModal({
           )}
 
           {/* 1. Seleccionar Clienta */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="clienta-select" className="text-xs font-semibold text-white/80 flex items-center gap-1.5">
+          <Field className="gap-2">
+            <FieldLabel
+              htmlFor="clienta-select"
+              className="gap-1.5 text-xs font-semibold text-white/80"
+            >
               <User className="size-3.5 text-[var(--accent)]" />
               <span>Clienta destinataria</span>
-            </label>
+            </FieldLabel>
             {cargandoClientas ? (
               <div className="flex items-center gap-2 text-xs text-white/50 p-2.5 bg-white/5 rounded-xl border border-white/10">
                 <Loader2 className="size-4 animate-spin text-[#E070C4]" />
                 <span>Cargando clientas registradas...</span>
               </div>
             ) : (
-              <select
+              <NativeSelect
                 id="clienta-select"
                 value={clientaId}
                 onChange={(e) => setClientaId(e.target.value)}
                 required
-                className="w-full bg-white/5 border border-white/15 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-[#E070C4] transition-colors"
+                className="w-full"
               >
-                <option value="" disabled className="bg-[#1A1209] text-white/40">
+                <NativeSelectOption value="" disabled className="text-white/40">
                   Selecciona una clienta...
-                </option>
+                </NativeSelectOption>
                 {clientas.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-[#1A1209] text-white">
+                  <NativeSelectOption key={c.id} value={c.id}>
                     {c.nombre} ({c.correo}) {c.inasistencias > 0 ? `· ${c.inasistencias} inasist.` : ''}
-                  </option>
+                  </NativeSelectOption>
                 ))}
-              </select>
+              </NativeSelect>
             )}
-          </div>
+          </Field>
 
           {/* 2. Seleccionar Servicios */}
           <div className="flex flex-col gap-2">
@@ -338,17 +344,22 @@ export function NuevaCitaManualModal({
           </div>
 
           {/* 4. Notas */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="notas-cita" className="text-xs font-semibold text-white/80">Notas o especificaciones</label>
-            <textarea
+          <Field className="gap-1.5">
+            <FieldLabel
+              htmlFor="notas-cita"
+              className="text-xs font-semibold text-white/80"
+            >
+              Notas o especificaciones
+            </FieldLabel>
+            <Textarea
               id="notas-cita"
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
               placeholder="Preferencias de color, diseño o detalles relevantes..."
               rows={2}
-              className="w-full bg-white/5 border border-white/15 rounded-xl p-2.5 text-xs text-white placeholder-white/30 focus:outline-none focus:border-[#E070C4] transition-colors resize-none"
+              className="text-xs"
             />
-          </div>
+          </Field>
 
           <DialogFooter className="mt-2 flex-col-reverse sm:flex-row gap-2 border-t-0 bg-transparent p-0">
             <Button

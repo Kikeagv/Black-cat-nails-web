@@ -8,9 +8,6 @@ export interface SemanaHeaderProps {
   rangoTexto: string;
   onSemanaAnterior: () => void;
   onSemanaSiguiente: () => void;
-  onHoy?: () => void;
-  vistaModo?: 'dia' | 'semana' | 'mes';
-  onCambiarVista?: (modo: 'dia' | 'semana' | 'mes') => void;
   onNuevaCita: () => void;
 }
 
@@ -18,27 +15,13 @@ export function SemanaHeader({
   rangoTexto,
   onSemanaAnterior,
   onSemanaSiguiente,
-  onHoy,
-  vistaModo = 'semana',
-  onCambiarVista,
   onNuevaCita,
 }: SemanaHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-      <div className="flex items-center gap-3">
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
-          Agenda
-        </h1>
-        {onHoy && (
-          <button
-            type="button"
-            onClick={onHoy}
-            className="text-xs px-2.5 py-1 rounded-md bg-white/5 hover:bg-white/10 text-[var(--accent)] border border-white/10 transition-colors"
-          >
-            Hoy
-          </button>
-        )}
-      </div>
+      <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
+        Agenda
+      </h1>
 
       <div className="flex flex-wrap items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-end">
         {/* Navegación semanal */}
@@ -68,28 +51,6 @@ export function SemanaHeader({
           >
             <ChevronRight className="size-4" />
           </Button>
-        </div>
-
-        {/* Toggle segmentado Día / Semana / Mes */}
-        <div className="hidden md:flex items-center bg-white/4 border border-white/10 rounded-lg p-1">
-          {(['dia', 'semana', 'mes'] as const).map((modo) => {
-            const activo = vistaModo === modo;
-            const etiqueta = modo === 'dia' ? 'Día' : modo === 'semana' ? 'Semana' : 'Mes';
-            return (
-              <button
-                key={modo}
-                type="button"
-                onClick={() => onCambiarVista?.(modo)}
-                className={`text-xs px-3 py-1 rounded-md transition-colors ${
-                  activo
-                    ? 'bg-[#B4476E] text-white font-semibold shadow-xs'
-                    : 'text-white/40 hover:text-white/80 font-medium'
-                }`}
-              >
-                {etiqueta}
-              </button>
-            );
-          })}
         </div>
 
         {/* Botón Nueva cita manual */}

@@ -244,8 +244,7 @@ export function calcularIngresosPorSemana(
 /**
  * Alertas automáticas del sistema:
  * 1. Insumos bajo mínimo (`insumo_bajo`, severidad 'critico').
- * 2. Citas sin confirmar a menos de 24 h (`cita_sin_confirmar`, severidad 'medio').
- * 3. Retoques pendientes dentro de los próximos 7 días sin cita agendada (`retoque_pendiente`, severidad 'bajo').
+ * 2. Retoques pendientes dentro de los próximos 7 días sin cita agendada (`retoque_pendiente`, severidad 'bajo').
  */
 export function generarAlertas(
   insumos: Insumo[],
@@ -271,29 +270,7 @@ export function generarAlertas(
     }
   }
 
-  // 2. Alerta de citas sin confirmar a menos de 24 h
-  const limite24hMs = ahoraMs + 24 * 60 * 60 * 1000;
-  for (const cita of citas) {
-    if (cita.estado === 'solicitada') {
-      const inicioMs = new Date(cita.inicio).getTime();
-      // Si la cita es para hoy o dentro de las próximas 24 h
-      if (inicioMs >= ahoraMs - 2 * 60 * 60 * 1000 && inicioMs <= limite24hMs) {
-        const clienta =
-          cita.clientaNombre || mapaUsuarias.get(cita.clientaId) || 'Clienta';
-        const horaStr = cita.inicio.slice(11, 16);
-        const fechaCita = cita.inicio.slice(0, 10);
-        const cuando = fechaCita === hoyStr ? 'hoy' : 'mañana';
-
-        alertas.push({
-          tipo: 'cita_sin_confirmar',
-          mensaje: `${clienta} ${cuando} ${horaStr}`,
-          severidad: 'medio',
-        });
-      }
-    }
-  }
-
-  // 3. Alerta de retoques pendientes (próximos 7 días)
+  // 2. Alerta de retoques pendientes (próximos 7 días)
   const dLimiteRetoque = new Date(ref);
   dLimiteRetoque.setDate(dLimiteRetoque.getDate() + DIAS_AVISO_RETOQUE);
   const limiteRetoqueStr = formatearYMD(dLimiteRetoque);

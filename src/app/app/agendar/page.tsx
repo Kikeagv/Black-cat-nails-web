@@ -38,6 +38,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
+import { Textarea } from '@/components/ui/textarea';
+import { Field, FieldLabel } from '@/components/ui/field';
 
 /**
  * Formatea minutos a una cadena legible (ej. 135 -> '2 h 15 min').
@@ -254,13 +256,10 @@ export default function AgendarPage() {
   return (
     <div className="max-w-[720px] mx-auto space-y-6 pb-28">
       {/* Encabezado principal */}
-      <div className="space-y-2">
+      <div>
         <h1 className="text-display-32 font-serif text-white tracking-tight">
           Agendar Cita
         </h1>
-        <p className="text-sm text-[var(--accent)]">
-          Reserva tu momento de belleza y cuidado de uñas en 3 simples pasos
-        </p>
       </div>
 
       {/* Indicador de pasos (Figma nodos 14:20, 14:89, 14:209) */}
@@ -801,20 +800,27 @@ export default function AgendarPage() {
           </Card>
 
           {/* Notas para la estilista (Figma nodo 14:233) */}
-          <Card className="p-4 rounded-[16px] border border-white/10 bg-[#221910]/80 backdrop-blur space-y-2">
-            <label htmlFor="notas" className="text-sm font-semibold text-white flex items-center justify-between">
-              <span>Notas para la estilista</span>
-              <span className="text-xs text-white/50 font-normal">{notas.length}/300</span>
-            </label>
-            <textarea
-              id="notas"
-              rows={3}
-              maxLength={300}
-              value={notas}
-              onChange={(e) => setNotas(e.target.value)}
-              placeholder="¿Algún detalle o preferencia especial?"
-              className="w-full bg-[#1A1209] border border-[var(--accent)]/50 focus:border-[var(--primary)] rounded-[12px] p-3 text-sm text-white placeholder:text-white/50 focus:outline-none transition-colors resize-none"
-            />
+          <Card className="p-4 rounded-[16px] border border-white/10 bg-[#221910]/80 backdrop-blur">
+            <Field className="gap-2">
+              <FieldLabel
+                htmlFor="notas"
+                className="w-full justify-between text-sm font-semibold text-white"
+              >
+                <span>Notas para la estilista</span>
+                <span className="text-xs font-normal text-white/50">
+                  {notas.length}/300
+                </span>
+              </FieldLabel>
+              <Textarea
+                id="notas"
+                rows={3}
+                maxLength={300}
+                value={notas}
+                onChange={(e) => setNotas(e.target.value)}
+                placeholder="¿Algún detalle o preferencia especial?"
+                className="min-h-[88px] rounded-[12px] border-[var(--accent)]/50 bg-[#1A1209] p-3 text-sm text-white placeholder:text-white/50 focus-visible:border-[var(--primary)] focus-visible:ring-[var(--primary)]/40"
+              />
+            </Field>
           </Card>
 
           {/* Casilla de política de cancelación (Figma nodo 14:243) */}

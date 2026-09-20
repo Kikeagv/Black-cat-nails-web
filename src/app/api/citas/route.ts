@@ -123,7 +123,7 @@ export async function GET(request: NextRequest) {
  * - Revalida disponibilidad en el servidor (409 si horario ocupado).
  * - Copia nombre, precio y duración de cada servicio (congelados en la cita).
  * - Calcula fin, duracionTotalMin (servicios + 15m prep) y montoTotal.
- * - Asigna estado inicial 'solicitada'.
+ * - Asigna estado inicial 'confirmada'.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(formatZodError(parseResult.error), { status: 400 });
     }
 
-    const { servicioIds, inicio: rawInicio, notas, imagenReferenciaUrl } = parseResult.data;
+    const { servicioIds, inicio: rawInicio, notas } = parseResult.data;
 
     // 2. Determinar la clienta destinataria
     let targetClientaId = usuaria.id;
@@ -322,9 +322,8 @@ export async function POST(request: NextRequest) {
         fin: finIso,
         duracionTotalMin,
         montoTotal,
-        estado: 'solicitada',
+        estado: 'confirmada',
         notas: notas || undefined,
-        imagenReferenciaUrl: imagenReferenciaUrl || undefined,
         creadaEn: formatearIsoElSalvador(Date.now()),
       });
 

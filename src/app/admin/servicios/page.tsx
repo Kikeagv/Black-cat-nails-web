@@ -19,11 +19,9 @@ import {
   Pencil,
   PowerOff,
   CheckCircle2,
-  Search,
   RefreshCw,
   AlertCircle,
   Clock,
-  Layers,
   Package,
 } from 'lucide-react';
 import { useCatalogo } from '@/context/CatalogoContext';
@@ -31,7 +29,8 @@ import { Insumo, Servicio } from '@/types';
 import { insumosService } from '@/services/insumosService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { SearchInput } from '@/components/ui/search-input';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Card } from '@/components/ui/card';
 import {
   Table,
@@ -81,20 +80,6 @@ export default function AdminServiciosPage() {
       activo = false;
     };
   }, []);
-
-  // Métricas rápidas
-  const metricas = useMemo(() => {
-    const total = servicios.length;
-    const activos = servicios.filter((s) => s.activo).length;
-    const inactivos = total - activos;
-    const duracionPromedio =
-      total > 0
-        ? Math.round(
-            servicios.reduce((acc, s) => acc + s.duracionMin, 0) / total
-          )
-        : 0;
-    return { total, activos, inactivos, duracionPromedio };
-  }, [servicios]);
 
   // Lista de categorías únicas presentes en los servicios
   const categoriasDisponibles = useMemo(() => {
@@ -155,34 +140,26 @@ export default function AdminServiciosPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
       {/* 1. Encabezado principal */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-[var(--primary)]">
-            <Sparkles className="size-6" />
-            <h1 className="text-display-32 font-serif text-white">
-              Catálogo de Servicios
-            </h1>
-          </div>
-          <p className="text-sm text-[var(--accent)]">
-            Administrá los precios, duraciones, ciclo de retorno e insumos consumidos por sesión.
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-display-32 font-serif text-white text-balance">
+          Catálogo de Servicios
+        </h1>
 
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            size="sm"
+            size="default"
             onClick={() => cargarServicios()}
             disabled={cargando}
-            className="text-xs gap-1.5 border-white/15 hover:bg-white/10"
+            className="h-11 md:h-10 text-xs gap-1.5 border-white/15 hover:bg-white/10"
           >
             <RefreshCw className={`size-3.5 ${cargando ? 'animate-spin' : ''}`} />
             <span>Refrescar</span>
           </Button>
           <Button
-            size="sm"
+            size="default"
             onClick={handleCrearNuevo}
-            className="text-xs gap-1.5 bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 shadow-md"
+            className="h-11 md:h-10 text-xs gap-1.5 bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90 shadow-md"
           >
             <Plus className="size-4" />
             <span>Nuevo servicio</span>
@@ -190,95 +167,55 @@ export default function AdminServiciosPage() {
         </div>
       </div>
 
-      {/* 2. Tarjetas de métricas rápidas (Estilo Figura 6) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-1">
-          <div className="flex items-center justify-between text-white/60 text-xs">
-            <span>Total Servicios</span>
-            <Layers className="size-4 text-[var(--accent)]" />
-          </div>
-          <p className="text-2xl font-bold text-white">{metricas.total}</p>
-          <p className="text-[11px] text-white/50">Servicios en el sistema</p>
-        </Card>
-
-        <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-1">
-          <div className="flex items-center justify-between text-white/60 text-xs">
-            <span>Activos en Web</span>
-            <CheckCircle2 className="size-4 text-emerald-400" />
-          </div>
-          <p className="text-2xl font-bold text-emerald-400">{metricas.activos}</p>
-          <p className="text-[11px] text-white/50">Visibles para agendar</p>
-        </Card>
-
-        <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-1">
-          <div className="flex items-center justify-between text-white/60 text-xs">
-            <span>Inactivos</span>
-            <PowerOff className="size-4 text-zinc-400" />
-          </div>
-          <p className="text-2xl font-bold text-zinc-300">{metricas.inactivos}</p>
-          <p className="text-[11px] text-white/50">Historial preservado</p>
-        </Card>
-
-        <Card className="p-4 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-1">
-          <div className="flex items-center justify-between text-white/60 text-xs">
-            <span>Duración Media</span>
-            <Clock className="size-4 text-[var(--primary)]" />
-          </div>
-          <p className="text-2xl font-bold text-[var(--primary)]">
-            {metricas.duracionPromedio} <span className="text-sm font-normal text-white/70">min</span>
-          </p>
-          <p className="text-[11px] text-white/50">Tiempo estándar por cita</p>
-        </Card>
-      </div>
-
-      {/* 3. Barra de búsqueda y filtros */}
+      {/* 2. Barra de búsqueda y filtros */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-card/40 p-3 rounded-[16px] border border-white/10">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 size-4 text-white/40" />
-          <Input
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar por nombre o categoría..."
-            className="pl-9 bg-black/20 border-white/10 text-sm h-9"
-          />
-        </div>
+        <SearchInput
+          containerClassName="flex-1"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Buscar por nombre o categoría..."
+        />
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Filtro categoría */}
-          <select
+          <NativeSelect
+            size="sm"
+            className="w-full sm:w-[190px]"
+            aria-label="Filtrar por categoría"
             value={filtroCategoria}
             onChange={(e) => setFiltroCategoria(e.target.value)}
-            className="h-9 rounded-md border border-white/15 bg-black/40 px-3 text-xs text-white focus:outline-none"
           >
             {categoriasDisponibles.map((cat) => (
-              <option key={cat} value={cat} className="bg-[#1E1610] text-white capitalize">
+              <NativeSelectOption key={cat} value={cat} className="capitalize">
                 {cat === 'todas' ? 'Todas las categorías' : cat}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
+          </NativeSelect>
 
           {/* Filtro estado */}
-          <select
+          <NativeSelect
+            size="sm"
+            className="w-full sm:w-[160px]"
+            aria-label="Filtrar por estado"
             value={filtroEstado}
             onChange={(e) =>
               setFiltroEstado(e.target.value as 'todos' | 'activos' | 'inactivos')
             }
-            className="h-9 rounded-md border border-white/15 bg-black/40 px-3 text-xs text-white focus:outline-none"
           >
-            <option value="todos" className="bg-[#1E1610] text-white">
+            <NativeSelectOption value="todos">
               Todos los estados
-            </option>
-            <option value="activos" className="bg-[#1E1610] text-white">
+            </NativeSelectOption>
+            <NativeSelectOption value="activos">
               Solo activos
-            </option>
-            <option value="inactivos" className="bg-[#1E1610] text-white">
+            </NativeSelectOption>
+            <NativeSelectOption value="inactivos">
               Solo inactivos
-            </option>
-          </select>
+            </NativeSelectOption>
+          </NativeSelect>
         </div>
       </div>
 
-      {/* 4. Estado de error con reintento */}
+      {/* 3. Estado de error con reintento */}
       {error && (
         <div className="p-4 rounded-[16px] bg-red-950/40 border border-red-500/30 flex items-center justify-between gap-3 text-sm text-red-200">
           <div className="flex items-center gap-2.5">
@@ -296,8 +233,8 @@ export default function AdminServiciosPage() {
         </div>
       )}
 
-      {/* 5. Tabla de servicios y estados */}
-      <Card className="rounded-[16px] border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
+      {/* 4. Tabla de servicios y estados */}
+      <Card className="rounded-[16px] border border-white/8 bg-card/60 backdrop-blur overflow-hidden py-0">
         {cargando ? (
           /* Estado de carga con esqueleto visual */
           <div className="p-6 space-y-4">
@@ -364,23 +301,39 @@ export default function AdminServiciosPage() {
         ) : (
           /* Tabla con contenido completo */
           <Table>
-            <TableHeader className="bg-black/30">
-              <TableRow className="border-white/10 hover:bg-transparent text-white/70 text-xs">
-                <TableHead className="w-[280px]">Servicio</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead>Precio</TableHead>
-                <TableHead>Duración</TableHead>
-                <TableHead>Ciclo Retorno</TableHead>
-                <TableHead>Insumos</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
+            <TableHeader className="bg-white/3 border-b border-white/8">
+              <TableRow className="hover:bg-transparent border-white/8">
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Servicio
+                </TableHead>
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Categoría
+                </TableHead>
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Precio
+                </TableHead>
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Duración
+                </TableHead>
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Ciclo Retorno
+                </TableHead>
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Insumos
+                </TableHead>
+                <TableHead className="text-white/80 font-medium text-xs">
+                  Estado
+                </TableHead>
+                <TableHead className="text-right text-white/80 font-medium text-xs">
+                  Acciones
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {serviciosFiltrados.map((servicio) => (
                 <TableRow
                   key={servicio.id}
-                  className="border-white/10 hover:bg-white/5 transition-colors"
+                  className="border-white/5 hover:bg-white/2 transition-colors"
                 >
                   {/* Nombre y miniatura */}
                   <TableCell className="font-medium">
@@ -407,7 +360,7 @@ export default function AdminServiciosPage() {
                   </TableCell>
 
                   {/* Precio */}
-                  <TableCell className="text-white font-semibold text-sm">
+                  <TableCell className="text-white font-semibold text-sm tabular-nums">
                     <span className="text-[var(--primary)] font-bold">
                       ${servicio.precio.toFixed(2)}
                     </span>
@@ -417,14 +370,14 @@ export default function AdminServiciosPage() {
                   <TableCell className="text-xs text-white/80">
                     <div className="flex items-center gap-1">
                       <Clock className="size-3.5 text-white/50" />
-                      <span>{servicio.duracionMin} min</span>
+                      <span className="tabular-nums">{servicio.duracionMin} min</span>
                     </div>
                   </TableCell>
 
                   {/* Ciclo de retorno */}
                   <TableCell className="text-xs text-white/80">
                     {servicio.cicloRetornoDias > 0 ? (
-                      <span>{servicio.cicloRetornoDias} días</span>
+                      <span className="tabular-nums">{servicio.cicloRetornoDias} días</span>
                     ) : (
                       <span className="text-white/40 italic">Sin retoque</span>
                     )}
@@ -459,34 +412,40 @@ export default function AdminServiciosPage() {
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <Button
-                        size="sm"
+                        size="icon"
                         variant="ghost"
                         onClick={() => handleEditar(servicio)}
-                        className="h-8 px-2.5 text-xs text-white/80 hover:text-white hover:bg-white/10"
+                        aria-label={`Editar ${servicio.nombre}`}
+                        title={`Editar ${servicio.nombre}`}
+                        className="h-11 w-11 rounded-[12px] p-0 text-white/80 hover:text-white hover:bg-white/10 md:h-10 md:w-10 2xl:w-auto 2xl:px-2.5"
                       >
-                        <Pencil className="size-3.5 mr-1" />
-                        Editar
+                        <Pencil className="size-4 2xl:mr-1" aria-hidden="true" />
+                        <span className="sr-only 2xl:not-sr-only">Editar</span>
                       </Button>
 
                       {servicio.activo ? (
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
                           onClick={() => handleSolicitarDesactivar(servicio)}
-                          className="h-8 px-2.5 text-xs text-amber-400/80 hover:text-amber-300 hover:bg-amber-950/40"
+                          aria-label={`Desactivar ${servicio.nombre}`}
+                          title={`Desactivar ${servicio.nombre}`}
+                          className="h-11 w-11 rounded-[12px] p-0 text-amber-400/80 hover:text-amber-300 hover:bg-amber-950/40 md:h-10 md:w-10 2xl:w-auto 2xl:px-2.5"
                         >
-                          <PowerOff className="size-3.5 mr-1" />
-                          Desactivar
+                          <PowerOff className="size-4 2xl:mr-1" aria-hidden="true" />
+                          <span className="sr-only 2xl:not-sr-only">Desactivar</span>
                         </Button>
                       ) : (
                         <Button
-                          size="sm"
+                          size="icon"
                           variant="ghost"
                           onClick={() => handleReactivar(servicio)}
-                          className="h-8 px-2.5 text-xs text-emerald-400/80 hover:text-emerald-300 hover:bg-emerald-950/40"
+                          aria-label={`Activar ${servicio.nombre}`}
+                          title={`Activar ${servicio.nombre}`}
+                          className="h-11 w-11 rounded-[12px] p-0 text-emerald-400/80 hover:text-emerald-300 hover:bg-emerald-950/40 md:h-10 md:w-10 2xl:w-auto 2xl:px-2.5"
                         >
-                          <CheckCircle2 className="size-3.5 mr-1" />
-                          Activar
+                          <CheckCircle2 className="size-4 2xl:mr-1" aria-hidden="true" />
+                          <span className="sr-only 2xl:not-sr-only">Activar</span>
                         </Button>
                       )}
                     </div>

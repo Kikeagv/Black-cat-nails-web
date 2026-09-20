@@ -20,6 +20,9 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Black Cat Nails",
   description: "Estudio de manicura y estética de uñas",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

@@ -126,9 +126,6 @@ export default function ClientaAppPage() {
         <h1 className="text-display-32 font-serif text-white tracking-tight">
           ¡Hola, {primerNombre}!
         </h1>
-        <p className="text-sm text-[var(--accent)]">
-          ¿Qué diseño creamos hoy?
-        </p>
       </div>
 
       {/* 2. Sección Superior: Tarjeta de Próxima Cita / Estado Vacío (Figma 5:52) */}
@@ -230,7 +227,7 @@ export default function ClientaAppPage() {
           /* Estado Vacío: Clienta sin citas agendadas */
           <Card
             variant="surface"
-            className="p-6 rounded-[16px] shadow-xl border border-white/10 space-y-4"
+            className="p-6 rounded-[16px] shadow-xl border border-white/10 gap-3"
           >
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white/90">
               <Calendar className="size-4" />
@@ -248,7 +245,7 @@ export default function ClientaAppPage() {
             </div>
 
             {/* Botón de agendar visible en sección de próxima cita vacía */}
-            <div className="pt-2">
+            <div>
               <Link href="/app/agendar" className="inline-block">
                 <Button
                   size="lg"
@@ -311,20 +308,20 @@ export default function ClientaAppPage() {
 
         {/* Lista de servicios activos */}
         {cargandoCatalogo ? (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="h-20 rounded-[16px] bg-card border border-white/10 animate-pulse flex items-center justify-between p-4"
+                className="min-h-[132px] rounded-[16px] bg-card border border-white/10 animate-pulse flex flex-col gap-3 p-4"
               >
-                <div className="flex items-center gap-3 w-2/3">
+                <div className="flex items-start gap-3 w-full">
                   <div className="size-12 rounded-[12px] bg-white/10" />
                   <div className="space-y-2 flex-1">
                     <div className="h-4 bg-white/10 rounded w-1/2" />
                     <div className="h-3 bg-white/10 rounded w-1/3" />
                   </div>
                 </div>
-                <div className="size-8 bg-white/10 rounded-full" />
+                <div className="h-3 w-16 bg-white/10 rounded" />
               </div>
             ))}
           </div>
@@ -360,32 +357,32 @@ export default function ClientaAppPage() {
             </Button>
           </Card>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {serviciosFiltrados.map((servicio) => (
               <Link
                 key={servicio.id}
                 href={`/app/agendar?servicioId=${servicio.id}`}
                 className="block group"
               >
-                <Card className="p-4 flex items-center justify-between gap-4 bg-card rounded-[16px] border border-white/10 hover:border-[var(--accent)]/50 transition-all hover:bg-card/80 cursor-pointer shadow-sm">
-                  <div className="flex items-center gap-3.5 min-w-0">
+                <Card className="h-full items-stretch gap-3 p-4 bg-card rounded-[16px] border border-white/10 hover:border-[var(--accent)]/50 transition-all hover:bg-card/80 cursor-pointer shadow-sm">
+                  <div className="flex items-start gap-3.5 min-w-0">
                     {/* Icono de servicio */}
                     <div className="size-12 sm:size-14 rounded-[12px] bg-[#2E2218] border border-white/10 flex items-center justify-center shrink-0 text-[var(--primary)] group-hover:scale-105 transition-transform">
                       <Sparkles className="size-6" />
                     </div>
 
                     {/* Datos del servicio */}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold text-[15px] text-white truncate group-hover:text-[var(--primary)] transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <h3 className="min-w-0 flex-1 font-semibold text-[15px] text-white truncate group-hover:text-[var(--primary)] transition-colors">
                           {servicio.nombre}
                         </h3>
-                        <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-white/10 text-white/70">
+                        <span className="shrink-0 text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-white/10 text-white/70">
                           {servicio.categoria}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs text-white/60 mt-1">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/60 mt-1">
                         <span className="flex items-center gap-1">
                           <Clock className="size-3 text-white/50" />
                           <span>{servicio.duracionMin} min</span>
@@ -407,7 +404,7 @@ export default function ClientaAppPage() {
                   </div>
 
                   {/* Acción rápida */}
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="mt-auto flex items-center gap-2 self-start">
                     <span className="hidden sm:inline-flex items-center gap-1 text-xs text-[var(--accent)] font-medium group-hover:translate-x-0.5 transition-transform">
                       <span>Agendar</span>
                       <ArrowRight className="size-3.5" />
@@ -419,80 +416,6 @@ export default function ClientaAppPage() {
             ))}
           </div>
         )}
-      </section>
-
-      {/* 4. Sección: Diseños Destacados (Figma nodo 5:101) */}
-      <section aria-label="Diseños destacados" className="space-y-4 pt-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-serif text-white font-semibold">
-            Diseños destacados
-          </h2>
-          <Link
-            href="/app/agendar"
-            className="text-xs font-semibold text-[var(--accent)] hover:text-white transition-colors"
-          >
-            Ver todos
-          </Link>
-        </div>
-
-        {/* Carrusel / galería horizontal de diseños */}
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-          {[
-            {
-              id: 'd1',
-              titulo: 'Velvet Cat Eye',
-              sub: 'Acrílico + Brillo magnético',
-              gradiente: 'from-[#4a1c36] via-[#2d1b28] to-[#1a1209]',
-              badge: 'Tendencia',
-            },
-            {
-              id: 'd2',
-              titulo: 'French Clásico',
-              sub: 'Semipermanente blanco puro',
-              gradiente: 'from-[#2e2640] via-[#1f1a2e] to-[#1a1209]',
-              badge: 'Elegante',
-            },
-            {
-              id: 'd3',
-              titulo: 'Chrome Rose',
-              sub: 'Efecto espejo oro rosa',
-              gradiente: 'from-[#522938] via-[#331c26] to-[#1a1209]',
-              badge: 'Popular',
-            },
-            {
-              id: 'd4',
-              titulo: 'Nail Art Pastel',
-              sub: 'Diseño artístico mano alzada',
-              gradiente: 'from-[#3a294d] via-[#231b33] to-[#1a1209]',
-              badge: 'Artístico',
-            },
-          ].map((item) => (
-            <Link
-              key={item.id}
-              href="/app/agendar"
-              className="group shrink-0"
-            >
-              <div
-                className={`size-[108px] sm:size-[120px] rounded-[12px] border border-white/10 bg-gradient-to-br ${item.gradiente} p-3 flex flex-col justify-between hover:border-[var(--primary)] hover:scale-[1.03] transition-all shadow-md relative overflow-hidden`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-white/15 text-white/90">
-                    {item.badge}
-                  </span>
-                  <Sparkles className="size-3 text-[var(--primary)] group-hover:rotate-12 transition-transform" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-white leading-tight truncate">
-                    {item.titulo}
-                  </p>
-                  <p className="text-[10px] text-white/60 leading-tight truncate">
-                    {item.sub}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
       </section>
     </div>
   );

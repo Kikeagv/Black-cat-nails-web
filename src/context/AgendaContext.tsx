@@ -40,7 +40,6 @@ export interface AgendaContextType {
     inicio: string;
     notas?: string;
     clientaId?: string;
-    imagenReferenciaUrl?: string;
   }) => Promise<Cita>;
   cambiarEstado: (id: string, nuevoEstado: EstadoCita) => Promise<Cita>;
   recargar: () => Promise<void>;
@@ -161,7 +160,6 @@ export function AgendaProvider({ children }: AgendaProviderProps) {
       inicio: string;
       notas?: string;
       clientaId?: string;
-      imagenReferenciaUrl?: string;
     }): Promise<Cita> => {
       try {
         setError(null);
@@ -169,7 +167,7 @@ export function AgendaProvider({ children }: AgendaProviderProps) {
 
         // Actualizar la lista local sin recargar la página
         setCitas((prev) => {
-          // Si el filtro de estado no coincide con 'solicitada', no se agrega a la vista
+          // Si el filtro activo no coincide, no se agrega a la vista
           if (filtros.estado && nuevaCita.estado !== filtros.estado) {
             return prev;
           }

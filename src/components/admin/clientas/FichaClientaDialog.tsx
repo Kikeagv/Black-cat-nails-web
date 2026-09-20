@@ -25,6 +25,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { FichaClientaDetalle } from '@/domain/clientas';
 import { clientasService } from '@/services/clientasService';
 import { EstadoCita } from '@/types';
@@ -191,7 +193,7 @@ export function FichaClientaDialog({
 
   return (
     <Dialog open={abierto} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto border-white/10 bg-[#1A1209] text-white p-6 rounded-[16px] space-y-5">
+      <DialogContent className="w-[calc(100%-2rem)] sm:max-w-4xl max-h-[85vh] overflow-y-auto border-white/10 bg-[#1A1209] text-white p-6 rounded-[16px] space-y-5">
         {cargando && (
           <div className="space-y-6 animate-pulse py-2" aria-label="Cargando ficha de clienta...">
             <div className="flex items-center gap-3">
@@ -362,12 +364,15 @@ export function FichaClientaDialog({
             </div>
 
             {/* 4. Notas privadas de la administradora */}
-            <div className="space-y-2 p-4 rounded-[12px] bg-white/3 border border-white/8">
+            <Field className="gap-2 p-4 rounded-[12px] bg-white/3 border border-white/8">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-white/90 flex items-center gap-1.5">
+                <FieldLabel
+                  htmlFor="notas-privadas"
+                  className="gap-1.5 text-xs font-semibold text-white/90"
+                >
                   <Lock className="size-3.5 text-amber-400" />
                   Notas privadas (solo visible para ti)
-                </label>
+                </FieldLabel>
                 <Button
                   size="sm"
                   variant="outline"
@@ -388,14 +393,15 @@ export function FichaClientaDialog({
                   )}
                 </Button>
               </div>
-              <textarea
+              <Textarea
+                id="notas-privadas"
                 value={notasPrivadas}
                 onChange={(e) => setNotasPrivadas(e.target.value)}
                 rows={3}
                 placeholder="Añade observaciones privadas sobre preferencias, tonos favoritos, cuidados o acuerdos..."
-                className="w-full text-xs p-3 rounded-lg bg-black/40 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-[var(--primary)] resize-none"
+                className="min-h-20 rounded-[8px] border-white/10 bg-black/40 p-3 text-xs text-white placeholder:text-white/30 focus-visible:ring-[var(--primary)]/40"
               />
-            </div>
+            </Field>
 
             {/* 5. Historial cronológico de citas */}
             <div className="space-y-3">

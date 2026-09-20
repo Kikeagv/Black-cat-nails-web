@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar as CalendarIcon, RefreshCw } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
 import { dashboardService } from '@/services/dashboardService';
 import { DashboardData } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -53,8 +52,6 @@ function formatearFechaEspanol(fechaStr: string): string {
 }
 
 export default function AdminDashboardPage() {
-  const { usuaria } = useAuth();
-
   // Fecha de referencia por defecto: fecha del seed donde hay citas programadas
   const [fechaReferencia, setFechaReferencia] = useState('2026-09-18');
   const [datos, setDatos] = useState<DashboardData | null>(null);
@@ -131,9 +128,6 @@ export default function AdminDashboardPage() {
           <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">
             Dashboard
           </h1>
-          <p className="text-xs sm:text-sm text-white/60">
-            Bienvenida, {usuaria?.nombre || 'Administradora'}. Resumen operativo y financiero del negocio.
-          </p>
         </div>
 
         {/* Date picker y botón de recargar */}
@@ -148,7 +142,7 @@ export default function AdminDashboardPage() {
                   setFechaReferencia(e.target.value);
                 }
               }}
-              className="bg-transparent text-white focus:outline-hidden font-medium cursor-pointer text-xs sm:text-sm"
+              className="bg-transparent text-white focus:outline-hidden font-medium cursor-pointer text-xs sm:text-sm [&::-webkit-calendar-picker-indicator]:hidden"
               aria-label="Seleccionar fecha de referencia"
             />
             <span className="hidden xl:inline text-white/40 text-xs pl-1">

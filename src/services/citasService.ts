@@ -38,7 +38,6 @@ export const citasService = {
     inicio: string;
     notas?: string;
     clientaId?: string;
-    imagenReferenciaUrl?: string;
   }): Promise<Cita> => {
     return http.post<Cita>('/api/citas', datos);
   },

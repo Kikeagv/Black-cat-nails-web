@@ -14,7 +14,6 @@ export interface AgendaGridProps {
   citas: Cita[];
   citaSeleccionadaId?: string | null;
   onSelectCita: (cita: Cita) => void;
-  diaActivoFechaStr?: string;
 }
 
 /**
@@ -51,7 +50,6 @@ export function AgendaGrid({
   citas,
   citaSeleccionadaId,
   onSelectCita,
-  diaActivoFechaStr,
 }: AgendaGridProps) {
   return (
     <div className="bg-white/4 border border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-4 overflow-x-auto min-w-0 w-full shadow-inner">
@@ -63,26 +61,15 @@ export function AgendaGrid({
 
           {/* Columnas de cabecera de los días */}
           {diasSemana.map((dia) => {
-            const esSeleccionado = diaActivoFechaStr === dia.fechaStr;
-            const esHoy = dia.esHoy;
-
             return (
               <div
                 key={dia.fechaStr}
-                className={`flex-1 flex flex-col items-center py-2 px-1 rounded-lg transition-colors text-center ${
-                  esSeleccionado || esHoy
-                    ? 'bg-[#B4476E]/15 border border-[#B4476E]/40 text-[#E070C4]'
-                    : 'text-white/40'
-                }`}
+                className="flex-1 flex flex-col items-center py-2 px-1 text-center text-white/50"
               >
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   {dia.claveDia}
                 </span>
-                <span
-                  className={`font-serif text-lg sm:text-xl font-bold ${
-                    esSeleccionado || esHoy ? 'text-white' : 'text-white/80'
-                  }`}
-                >
+                <span className="font-serif text-lg sm:text-xl font-bold text-white/80">
                   {dia.diaMes}
                 </span>
               </div>

@@ -30,7 +30,6 @@ export const baseServicioSchema = z.object({
     .max(90, 'El ciclo de retorno no puede superar 90 días')
     .refine((val) => val === 0 || val >= 7, 'El ciclo debe ser 0 o entre 7 y 90 días'),
   activo: z.boolean(),
-  imagenUrl: z.string().url('URL de imagen no válida').optional().or(z.literal('')),
   consumos: z.array(consumoInsumoSchema),
 });
 

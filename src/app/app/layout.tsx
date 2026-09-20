@@ -57,12 +57,12 @@ export default function ClientaLayout({
       {/* 1. Barra de navegación superior (Desktop y Mobile Header) */}
       <header className="border-b border-white/10 bg-card/60 backdrop-blur sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Logo y título */}
+          {/* Logo y marca */}
           <Link href="/app" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
             <div className="relative size-8 shrink-0">
               <Image
                 src="/logo.svg"
-                alt="Black Cat Nails Logo"
+                alt="Logo de Black Cat Nails"
                 fill
                 className="object-contain"
               />
@@ -100,9 +100,6 @@ export default function ClientaLayout({
             <div className="text-right hidden sm:block">
               <p className="text-xs font-semibold text-white truncate max-w-[140px]">
                 {usuaria?.nombre || 'Clienta'}
-              </p>
-              <p className="text-[11px] text-[var(--accent)] font-medium">
-                Clienta
               </p>
             </div>
 

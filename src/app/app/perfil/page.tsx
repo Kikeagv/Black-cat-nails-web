@@ -10,12 +10,7 @@ export default function PerfilPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-display-32 font-serif text-white">Mi Perfil</h1>
-        <p className="text-sm text-[var(--accent)]">
-          Información de la cuenta
-        </p>
-      </div>
+      <h1 className="text-display-32 font-serif text-white">Mi Perfil</h1>
 
       <Card className="p-6 rounded-[16px] border border-white/10 bg-card/60 backdrop-blur space-y-4">
         <div className="flex items-center gap-3">
@@ -28,14 +23,10 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-sm">
+        <div className="grid grid-cols-1 gap-3 pt-2 text-sm">
           <div className="p-3 rounded-[12px] bg-black/20 border border-white/5">
             <span className="text-xs text-white/50 block">Teléfono:</span>
             <span className="font-medium text-white">{usuaria?.telefono}</span>
-          </div>
-          <div className="p-3 rounded-[12px] bg-black/20 border border-white/5">
-            <span className="text-xs text-white/50 block">Tipo de cuenta:</span>
-            <span className="font-medium text-[var(--primary)] capitalize">{usuaria?.rol}</span>
           </div>
         </div>
 

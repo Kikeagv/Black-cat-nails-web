@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { crearInsumoSchema, UnidadInsumo } from '@/schemas/insumo';
 import { Insumo } from '@/types';
 import { useInventario } from '@/context/InventarioContext';
@@ -167,25 +169,36 @@ export function InsumoFormDialog({
           </div>
 
           {/* Unidad de medida */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-white/80">
+          <Field data-invalid={Boolean(errors.unidad)} className="gap-1.5">
+            <FieldLabel
+              htmlFor="insumo-unidad"
+              className="text-xs font-medium text-white/80"
+            >
               Unidad de medida *
-            </label>
-            <select
+            </FieldLabel>
+            <NativeSelect
+              id="insumo-unidad"
+              aria-invalid={Boolean(errors.unidad)}
+              aria-describedby={
+                errors.unidad ? 'insumo-unidad-error' : undefined
+              }
               {...register('unidad')}
               disabled={isSubmitting}
-              className="w-full h-9 rounded-md border border-white/10 bg-[#1A1209] px-3 py-1 text-sm text-white shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--primary)] disabled:opacity-50"
+              className="w-full"
             >
               {UNIDADES_INSUMO.map((u) => (
-                <option key={u.valor} value={u.valor} className="bg-[#1A1209] text-white">
+                <NativeSelectOption key={u.valor} value={u.valor}>
                   {u.etiqueta}
-                </option>
+                </NativeSelectOption>
               ))}
-            </select>
-            {errors.unidad && (
-              <p className="text-[11px] text-red-400">{errors.unidad.message}</p>
-            )}
-          </div>
+            </NativeSelect>
+            <FieldError
+              id="insumo-unidad-error"
+              className="text-[11px] text-red-400"
+            >
+              {errors.unidad?.message}
+            </FieldError>
+          </Field>
 
           {/* Fila: Existencia y Mínimo */}
           <div className="grid grid-cols-2 gap-3">
@@ -232,7 +245,10 @@ export function InsumoFormDialog({
               Costo unitario (USD) *
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-xs text-white/40">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 left-3 z-10 flex items-center text-xs leading-none text-white/40"
+              >
                 $
               </span>
               <Input

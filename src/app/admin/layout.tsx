@@ -4,7 +4,7 @@
  * LAYOUT ADMINISTRATIVO — BLACK CAT NAILS WEB (BCN-12)
  *
  * Estructura de navegación para la administradora:
- * - Sidebar lateral con enlaces: Dashboard, Agenda, Clientas, Servicios, Inventario, Reportes.
+ * - Sidebar lateral con enlaces: Dashboard, Agenda, Clientas, Servicios e Inventario.
  * - Perfil de la usuaria y botón de cerrar sesión.
  * - Sidebar colapsable (drawer deslizable) en pantallas menores a 768 px.
  *
@@ -21,7 +21,6 @@ import {
   Users,
   Sparkles,
   Package,
-  BarChart3,
   LogOut,
   Menu,
   X,
@@ -41,7 +40,6 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { nombre: 'Clientas', href: '/admin/clientas', icono: Users },
   { nombre: 'Servicios', href: '/admin/servicios', icono: Sparkles },
   { nombre: 'Inventario', href: '/admin/inventario', icono: Package },
-  { nombre: 'Reportes', href: '/admin/reportes', icono: BarChart3 },
 ];
 
 export default function AdminLayout({
@@ -77,7 +75,7 @@ export default function AdminLayout({
           <div className="relative size-9 shrink-0">
             <Image
               src="/logo.svg"
-              alt="Black Cat Nails Logo"
+              alt="Logo de Black Cat Nails"
               fill
               className="object-contain"
             />
@@ -113,13 +111,10 @@ export default function AdminLayout({
       </div>
 
       {/* Bottom: Perfil de usuaria y logout */}
-      <div className="border-t border-white/10 pt-4 space-y-3">
+      <div className="border-t border-white/10 pt-4 space-y-2">
         <div className="px-2">
           <p className="text-sm font-semibold text-white truncate">
             {usuaria?.nombre || 'Administradora'}
-          </p>
-          <p className="text-xs text-[var(--accent)] font-medium">
-            Administradora
           </p>
         </div>
 

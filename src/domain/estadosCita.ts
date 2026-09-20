@@ -48,7 +48,7 @@ export function esTransicionValida(desde: EstadoCita, hacia: EstadoCita): boolea
  * Evalúa si una usuaria con un rol determinado puede ejecutar la transición entre estados (RN-02).
  *
  * - Admin: puede realizar cualquier transición permitida por la máquina de estados.
- * - Clienta: solo puede confirmar ('confirmada') o cancelar ('cancelada') su cita.
+ * - Clienta: solo puede cancelar ('cancelada') su cita.
  *
  * @param desde Estado actual de la cita
  * @param hacia Estado destino solicitado
@@ -69,7 +69,7 @@ export function puedeTransicionar(
   }
 
   if (rol === 'clienta') {
-    return hacia === 'confirmada' || hacia === 'cancelada';
+    return hacia === 'cancelada';
   }
 
   return false;
@@ -134,12 +134,12 @@ export function validarTransicionEstado(
 
   // 2. Validar permisos por rol
   if (rol === 'clienta') {
-    if (hacia === 'en_curso' || hacia === 'completada' || hacia === 'inasistencia') {
+    if (hacia !== 'cancelada') {
       return {
         valida: false,
         status: 403,
         codigo: 'permiso_insuficiente',
-        mensaje: 'Solo la administradora puede realizar esta acción',
+        mensaje: 'La clienta solo puede cancelar su cita',
       };
     }
 

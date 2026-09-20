@@ -43,7 +43,6 @@ export default function AdminAgendaPage() {
 
   const [citaSeleccionadaId, setCitaSeleccionadaId] = useState<string | null>(null);
   const [modalManualAbierto, setModalManualAbierto] = useState(false);
-  const [vistaModo, setVistaModo] = useState<'dia' | 'semana' | 'mes'>('semana');
 
   // Cálculo de semana: lunes inicial y domingo final
   const lunes = useMemo(() => obtenerLunesSemana(fechaReferencia), [fechaReferencia]);
@@ -88,10 +87,6 @@ export default function AdminAgendaPage() {
     });
   };
 
-  const handleHoy = () => {
-    setFechaReferencia(new Date());
-  };
-
   // Manejador reactivo de transición de estados
   const handleCambiarEstado = async (id: string, nuevoEstado: EstadoCita) => {
     try {
@@ -120,9 +115,6 @@ export default function AdminAgendaPage() {
         rangoTexto={rangoTexto}
         onSemanaAnterior={handleSemanaAnterior}
         onSemanaSiguiente={handleSemanaSiguiente}
-        onHoy={handleHoy}
-        vistaModo={vistaModo}
-        onCambiarVista={setVistaModo}
         onNuevaCita={() => setModalManualAbierto(true)}
       />
 
@@ -233,7 +225,6 @@ export default function AdminAgendaPage() {
               citas={citasSemana}
               citaSeleccionadaId={citaSeleccionadaId}
               onSelectCita={(cita) => setCitaSeleccionadaId(cita.id)}
-              diaActivoFechaStr={citaSeleccionada?.inicio.slice(0, 10)}
             />
           )}
         </div>

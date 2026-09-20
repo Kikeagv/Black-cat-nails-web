@@ -1,25 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
 import { Cita, EstadoCita } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { cn } from 'cn';
+import { Button } from '@/components/ui/button';
 import { cumpleAnticipacionCancelacion } from '@/domain/estadosCita';
 import {
-  CheckCircle2,
   XCircle,
   Clock,
   DollarSign,
   AlertCircle,
-  Loader2,
-  CalendarSync,
 } from 'lucide-react';
 
 interface CitaCardProps {
   cita: Cita;
-  onConfirmar?: (id: string) => Promise<void>;
   onSolicitarCancelar?: (cita: Cita) => void;
 }
 
@@ -47,13 +40,7 @@ const ETIQUETA_ESTADO: Record<EstadoCita, string> = {
   inasistencia: 'Inasistencia',
 };
 
-export function CitaCard({
-  cita,
-  onConfirmar,
-  onSolicitarCancelar,
-}: CitaCardProps) {
-  const [confirmando, setConfirmando] = useState(false);
-
+export function CitaCard({ cita, onSolicitarCancelar }: CitaCardProps) {
   // Extraer partes de fecha de forma determinista para zona de El Salvador
   const diaNum = parseInt(cita.inicio.slice(8, 10), 10);
   const mesIndex = parseInt(cita.inicio.slice(5, 7), 10) - 1;
@@ -66,19 +53,7 @@ export function CitaCard({
       : 'Servicio de uñas';
 
   const puedeCancelar = cumpleAnticipacionCancelacion(cita.inicio);
-  const esSolicitada = cita.estado === 'solicitada';
-  const esConfirmada = cita.estado === 'confirmada';
-  const esProxima = esSolicitada || esConfirmada || cita.estado === 'en_curso';
-
-  const handleConfirmar = async () => {
-    if (!onConfirmar || confirmando) return;
-    try {
-      setConfirmando(true);
-      await onConfirmar(cita.id);
-    } finally {
-      setConfirmando(false);
-    }
-  };
+  const puedeGestionar = cita.estado === 'solicitada' || cita.estado === 'confirmada';
 
   return (
     <div className="rounded-[18px] border border-white/10 bg-card/50 backdrop-blur p-4 sm:p-5 transition-all hover:border-white/20 shadow-sm space-y-4">
@@ -129,7 +104,7 @@ export function CitaCard({
       </div>
 
       {/* Acciones de la cita para citas próximas */}
-      {esProxima && (esSolicitada || esConfirmada) && (
+      {puedeGestionar && (
         <div className="pt-2 border-t border-white/5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
           {/* Advertencia si faltan menos de 12 horas */}
           {!puedeCancelar ? (
@@ -141,41 +116,7 @@ export function CitaCard({
             <span className="hidden sm:inline" />
           )}
 
-          <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
-            {/* Si está solicitada: botón de confirmar */}
-            {esSolicitada && onConfirmar && (
-              <Button
-                type="button"
-                variant="default"
-                size="sm"
-                onClick={handleConfirmar}
-                disabled={confirmando}
-                className="gap-1.5 text-xs font-semibold bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white"
-              >
-                {confirmando ? (
-                  <Loader2 className="size-3.5 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="size-3.5" />
-                )}
-                Confirmar cita
-              </Button>
-            )}
-
-            {/* Si está confirmada: botón de reprogramar según mockup de Figma */}
-            {esConfirmada && (
-              <Link
-                href="/app/agendar"
-                className={cn(
-                  buttonVariants({ variant: 'outline', size: 'sm' }),
-                  'gap-1.5 text-xs border-white/15 text-white/80 hover:text-white hover:bg-white/5'
-                )}
-              >
-                <CalendarSync className="size-3.5 text-[var(--accent)]" />
-                Reprogramar
-              </Link>
-            )}
-
-            {/* Botón de Cancelar para clienta */}
+          <div className="flex w-full items-center justify-end sm:w-auto">
             {onSolicitarCancelar && (
               <Button
                 type="button"

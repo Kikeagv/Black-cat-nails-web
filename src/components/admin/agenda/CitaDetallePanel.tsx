@@ -231,7 +231,7 @@ export function CitaDetallePanel({
       <div className="flex flex-col gap-2.5 pt-1">
         {!esFinalizada ? (
           <>
-            {cita.estado === 'confirmada' || cita.estado === 'en_curso' ? (
+            {cita.estado === 'en_curso' ? (
               <Button
                 type="button"
                 onClick={() => handleAccion('completar')}
@@ -257,7 +257,7 @@ export function CitaDetallePanel({
                 ) : (
                   <Sparkles className="size-4 text-white" />
                 )}
-                <span>Confirmar e Iniciar</span>
+                <span>Iniciar servicio</span>
               </Button>
             )}
 
@@ -276,14 +276,16 @@ export function CitaDetallePanel({
               <span>Marcar inasistencia</span>
             </Button>
 
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => handleAccion('cancelar')}
               disabled={Boolean(ejecutando) || cargandoAccion}
-              className="w-full text-xs text-white/40 hover:text-white/80 py-1.5 transition-colors text-center cursor-pointer hover:underline disabled:opacity-50"
+              className="min-h-10 h-auto w-full py-2 text-xs text-white/40 hover:bg-white/5 hover:text-white/80 hover:underline"
             >
               {ejecutando === 'cancelar' ? 'Cancelando...' : 'Cancelar cita'}
-            </button>
+            </Button>
           </>
         ) : (
           <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-center">

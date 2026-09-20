@@ -76,7 +76,6 @@
       "duracionMin": 45,
       "cicloRetornoDias": 30,
       "activo": true,
-      "imagenUrl": "/images/servicios/manicura-clasica.jpg",
       "consumos": [
         {
           "insumoId": "ins_2",
@@ -92,7 +91,6 @@
       "duracionMin": 60,
       "cicloRetornoDias": 21,
       "activo": true,
-      "imagenUrl": "/images/servicios/manicura-semipermanente.jpg",
       "consumos": [
         {
           "insumoId": "ins_5",
@@ -112,7 +110,6 @@
       "duracionMin": 90,
       "cicloRetornoDias": 25,
       "activo": true,
-      "imagenUrl": "/images/servicios/unas-esculpidas.jpg",
       "consumos": [
         {
           "insumoId": "ins_1",
@@ -132,7 +129,6 @@
       "duracionMin": 30,
       "cicloRetornoDias": 25,
       "activo": true,
-      "imagenUrl": "/images/servicios/diseno-artistico.jpg",
       "consumos": [
         {
           "insumoId": "ins_5",
@@ -148,7 +144,6 @@
       "duracionMin": 60,
       "cicloRetornoDias": 30,
       "activo": true,
-      "imagenUrl": "/images/servicios/pedicura-spa.jpg",
       "consumos": [
         {
           "insumoId": "ins_2",
@@ -164,7 +159,6 @@
       "duracionMin": 20,
       "cicloRetornoDias": 0,
       "activo": true,
-      "imagenUrl": "/images/servicios/retiro-unas.jpg",
       "consumos": [
         {
           "insumoId": "ins_2",
@@ -685,7 +679,7 @@
       "fin": "2026-09-18T15:45:00-06:00",
       "duracionTotalMin": 45,
       "montoTotal": 18,
-      "estado": "solicitada",
+      "estado": "confirmada",
       "notas": "Diseño floral en tonos pastel para evento",
       "creadaEn": "2026-09-17T11:30:00-06:00"
     },

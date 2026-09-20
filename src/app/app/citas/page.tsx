@@ -6,7 +6,7 @@
  * Vista de autogestión de citas para clientas según la Figura 4 de Figma:
  * - Pestañas segmentadas: Próximas e Historial con contadores.
  * - Tarjetas con bloque de fecha, desglose de servicios e insignia de estado temática.
- * - Acciones: Confirmar cita y Cancelar con validación de 12 horas.
+ * - Acciones: Cancelar citas con validación de 12 horas.
  * - Modal de confirmación antes de cancelar.
  * - Banner de retoque y fidelización cuando corresponde.
  * - Actualización de estado en tiempo real sin recargar mediante AgendaContext.
@@ -58,17 +58,7 @@ export default function MisCitasPage() {
     return completadas[0];
   }, [citasProximas, citasHistorial]);
 
-  // 3. Confirmar cita (reactivo, sin recargar)
-  const handleConfirmarCita = async (id: string) => {
-    try {
-      await cambiarEstado(id, 'confirmada');
-      toast.success('¡Cita confirmada! Te esperamos en nuestro local.');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Error al confirmar la cita');
-    }
-  };
-
-  // 4. Cancelar cita mediante modal
+  // Cancelar cita mediante modal
   const handleConfirmarCancelacion = async (id: string) => {
     try {
       setCancelando(true);
@@ -85,12 +75,7 @@ export default function MisCitasPage() {
   return (
     <div className="space-y-6">
       {/* Encabezado */}
-      <div className="space-y-1">
-        <h1 className="text-display-32 font-serif text-white">Mis Citas</h1>
-        <p className="text-sm text-[var(--accent)] font-medium">
-          Próximas citas e historial de reservas
-        </p>
-      </div>
+      <h1 className="text-display-32 font-serif text-white">Mis Citas</h1>
 
       {/* Pestañas segmentadas (Figma segment-tabs) */}
       <div className="p-1 rounded-full sm:rounded-[18px] bg-white/5 border border-white/10 max-w-sm sm:max-w-md mx-auto grid grid-cols-2 gap-1 select-none">
@@ -177,7 +162,6 @@ export default function MisCitasPage() {
                   <CitaCard
                     key={cita.id}
                     cita={cita}
-                    onConfirmar={handleConfirmarCita}
                     onSolicitarCancelar={(c) => setCitaACancelar(c)}
                   />
                 ))}

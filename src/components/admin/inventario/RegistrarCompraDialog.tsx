@@ -198,7 +198,10 @@ export function RegistrarCompraDialog({
               Costo unitario de compra (USD)
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-xs text-white/40">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 left-3 z-10 flex items-center text-xs leading-none text-white/40"
+              >
                 $
               </span>
               <Input

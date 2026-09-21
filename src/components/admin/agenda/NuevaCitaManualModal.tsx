@@ -36,6 +36,10 @@ export interface NuevaCitaManualModalProps {
   fechaInicial?: string; // YYYY-MM-DD
 }
 
+type ResultadoDisponibilidad =
+  | { clave: string; tipo: 'exito'; horarios: HorarioDisponible[] }
+  | { clave: string; tipo: 'error'; mensaje: string };
+
 export function NuevaCitaManualModal({
   abierto,
   onCerrar,
@@ -63,9 +67,22 @@ export function NuevaCitaManualModal({
   const [notas, setNotas] = useState<string>('');
 
   // Disponibilidad de horarios
-  const [horarios, setHorarios] = useState<HorarioDisponible[]>([]);
-  const [cargandoHorarios, setCargandoHorarios] = useState(false);
-  const [errorHorarios, setErrorHorarios] = useState<string | null>(null);
+  const [resultadoDisponibilidad, setResultadoDisponibilidad] =
+    useState<ResultadoDisponibilidad | null>(null);
+
+  const claveDisponibilidad =
+    fecha && serviciosSeleccionados.length > 0
+      ? `${fecha}|${serviciosSeleccionados.join(',')}`
+      : null;
+  const disponibilidadActual =
+    resultadoDisponibilidad?.clave === claveDisponibilidad
+      ? resultadoDisponibilidad
+      : null;
+  const horarios =
+    disponibilidadActual?.tipo === 'exito' ? disponibilidadActual.horarios : [];
+  const errorHorarios =
+    disponibilidadActual?.tipo === 'error' ? disponibilidadActual.mensaje : null;
+  const cargandoHorarios = Boolean(claveDisponibilidad) && !disponibilidadActual;
 
   // Estado de envío
   const [enviando, setEnviando] = useState(false);
@@ -101,9 +118,7 @@ export function NuevaCitaManualModal({
 
   // Consultar disponibilidad de horarios cuando cambian los servicios o la fecha
   useEffect(() => {
-    if (!fecha || serviciosSeleccionados.length === 0) {
-      return;
-    }
+    if (!claveDisponibilidad) return;
 
     let isMounted = true;
 
@@ -111,24 +126,28 @@ export function NuevaCitaManualModal({
       .obtenerDisponibilidad(fecha, serviciosSeleccionados)
       .then((res) => {
         if (isMounted) {
-          setHorarios(res.horarios || []);
-          setCargandoHorarios(false);
+          setResultadoDisponibilidad({
+            clave: claveDisponibilidad,
+            tipo: 'exito',
+            horarios: res.horarios || [],
+          });
         }
       })
       .catch((err: unknown) => {
         if (isMounted) {
-          setErrorHorarios(
-            err instanceof Error ? err.message : 'Error al consultar disponibilidad'
-          );
-          setHorarios([]);
-          setCargandoHorarios(false);
+          setResultadoDisponibilidad({
+            clave: claveDisponibilidad,
+            tipo: 'error',
+            mensaje:
+              err instanceof Error ? err.message : 'Error al consultar disponibilidad',
+          });
         }
       });
 
     return () => {
       isMounted = false;
     };
-  }, [fecha, serviciosSeleccionados]);
+  }, [claveDisponibilidad, fecha, serviciosSeleccionados]);
 
   // Calcular duración y montos de los servicios seleccionados
   const serviciosActivos = servicios.filter((s) => s.activo);
@@ -144,6 +163,7 @@ export function NuevaCitaManualModal({
     setServiciosSeleccionados((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
+    setHoraSeleccionada('');
   };
 
   const handleCrear = async (e: React.FormEvent) => {
@@ -289,7 +309,10 @@ export function NuevaCitaManualModal({
                   id="fecha-cita"
                   type="date"
                   value={fecha}
-                  onChange={(e) => setFecha(e.target.value)}
+                  onChange={(e) => {
+                    setFecha(e.target.value);
+                    setHoraSeleccionada('');
+                  }}
                   required
                   className="w-full bg-white/5 border border-white/15 rounded-xl p-2 text-sm text-white focus:outline-none focus:border-[#E070C4] transition-colors"
                 />

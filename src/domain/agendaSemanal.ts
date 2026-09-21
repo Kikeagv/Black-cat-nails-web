@@ -34,6 +34,27 @@ export const HORAS_GUTTER = [
 export const HORA_INICIO_GUTTER = 9; // 09:00 AM
 export const ALTO_POR_HORA_PX = 60;  // 1 hora = 60 px (1 min = 1 px)
 
+/**
+ * Obtiene la fecha civil actual del negocio, independientemente de la zona horaria
+ * configurada en el servidor o en el navegador.
+ */
+export function obtenerFechaActualElSalvador(ahora: Date = new Date()): Date {
+  const partes = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/El_Salvador',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(ahora);
+
+  const anio = Number(partes.find((parte) => parte.type === 'year')?.value);
+  const mes = Number(partes.find((parte) => parte.type === 'month')?.value);
+  const dia = Number(partes.find((parte) => parte.type === 'day')?.value);
+
+  // Las utilidades de la agenda trabajan con componentes de fecha locales,
+  // por eso se conserva la fecha civil en una medianoche local.
+  return new Date(anio, mes - 1, dia);
+}
+
 export interface BloqueFueraHorario {
   top: number;
   height: number;

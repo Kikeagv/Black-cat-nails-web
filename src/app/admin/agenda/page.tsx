@@ -22,6 +22,7 @@ import {
   obtenerDiasSemanaInfo,
   formatearRangoSemana,
   formatearFechaYMD,
+  obtenerFechaActualElSalvador,
 } from '@/domain/agendaSemanal';
 import {
   SemanaHeader,
@@ -35,11 +36,10 @@ import { Button } from '@/components/ui/button';
 export default function AdminAgendaPage() {
   const { citas, cargando, error, cambiarEstado, recargar } = useAgenda();
 
-  // Fecha de referencia inicial: fijada a la semana de Figma (24-30 ago 2026) para visualización inmediata del seed
-  const [fechaReferencia, setFechaReferencia] = useState<Date>(() => {
-    // 25 de agosto de 2026 (mes 7 en índice 0 de JS)
-    return new Date(2026, 7, 25);
-  });
+  // Abrir la agenda en la semana actual del negocio y ofrecer hoy como fecha inicial.
+  const [fechaReferencia, setFechaReferencia] = useState<Date>(() =>
+    obtenerFechaActualElSalvador()
+  );
 
   const [citaSeleccionadaId, setCitaSeleccionadaId] = useState<string | null>(null);
   const [modalManualAbierto, setModalManualAbierto] = useState(false);

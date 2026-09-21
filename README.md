@@ -1,4 +1,4 @@
-# Black Cat Nails Web — Etapa 2
+# Black Cat Nails Web
 
 Sistema web para el salón de manicura y estética **Black Cat Nails by Vante**, desarrollado como proyecto de cátedra para la asignatura **DPS941 (Diseño y Programación de Software Multiplataforma)** en la **Universidad Don Bosco**.
 
@@ -15,20 +15,29 @@ Sistema web para el salón de manicura y estética **Black Cat Nails by Vante**,
 - **URL de Producción**: [https://black-cat-nails-web.vercel.app](https://black-cat-nails-web.vercel.app)
 - **Repositorio en GitHub**: [Kikeagv/Black-cat-nails-web](https://github.com/Kikeagv/Black-cat-nails-web)
 
+## Credenciales de prueba
+
+Estas cuentas de demostración se cargan desde `src/data/seed.json`:
+
+| Rol | Correo | Contraseña |
+| --- | --- | --- |
+| **Administradora** | `vante@blackcatnails.sv` | `Password123` |
+| **Clienta** | `camila@mail.com` | `Password123` |
+
 ---
 
 ## Funcionalidades
 
-- **Autenticación (RF-01)**: Registro e inicio de sesión para clientas, sesión JWT y autorización por roles (`clienta` y `admin`). El registro público siempre asigna el rol `clienta`.
-- **Portal de la clienta (RF-02, RF-03, RF-05)**:
+- **Autenticación**: Registro e inicio de sesión para clientas, sesión JWT y autorización por roles (`clienta` y `admin`). El registro público siempre asigna el rol `clienta`.
+- **Portal de la clienta**:
   - Catálogo filtrable por categoría y próxima cita destacada (`/app`).
   - Agendamiento en tres pasos. La disponibilidad se consulta en vivo y se vuelve a validar en el servidor al crear la cita (`/app/agendar`).
   - Próximas citas e historial. La cita queda confirmada al crearse; la clienta puede cancelarla con al menos 12 horas de anticipación (`/app/citas`).
-- **Dashboard administrativo (RF-04)**: Indicadores, ingresos semanales, agenda del día y alertas operativas (`/admin`).
-- **Agenda (RF-03, RF-05)**: Vista semanal, detalle y cambio de estado de las citas, además de creación manual por parte de la administradora (`/admin/agenda`).
-- **Servicios (RF-02)**: Crear y editar servicios, gestionar su disponibilidad, precio, duración, ciclo de retorno y consumo de insumos (`/admin/servicios`).
-- **Inventario (RF-06)**: Existencias comparadas con el mínimo requerido, nivel de criticidad, rendimiento estimado por insumo y registro de compras (`/admin/inventario`).
-- **Clientas (RF-07)**: Búsqueda y filtros por actividad e inasistencias, ficha con historial y métricas, alerta a partir de dos inasistencias y notas privadas editables (`/admin/clientas`).
+- **Dashboard administrativo**: Indicadores, ingresos semanales, agenda del día y alertas operativas (`/admin`).
+- **Agenda**: Vista semanal, detalle y cambio de estado de las citas, además de creación manual por parte de la administradora (`/admin/agenda`).
+- **Servicios**: Crear y editar servicios, gestionar su disponibilidad, precio, duración, ciclo de retorno y consumo de insumos (`/admin/servicios`).
+- **Inventario**: Existencias comparadas con el mínimo requerido, nivel de criticidad, rendimiento estimado por insumo y registro de compras (`/admin/inventario`).
+- **Clientas**: Búsqueda y filtros por actividad e inasistencias, ficha con historial y métricas, alerta a partir de dos inasistencias y notas privadas editables (`/admin/clientas`).
 - **Estados de interfaz y UX**: Indicadores de carga, estados vacíos, mensajes de error y acciones para reintentar en las pantallas que consultan datos. El cliente HTTP informa cuando detecta falta de conexión. La interfaz es adaptable a móvil, tableta y escritorio.
 
 ## Arquitectura y autenticación
@@ -48,13 +57,6 @@ La aplicación está organizada alrededor de Next.js App Router:
 2. Envía `POST /api/auth/registro`. El servidor vuelve a validar el cuerpo con Zod, normaliza el correo y rechaza correos duplicados.
 3. `bcryptjs` guarda un hash de la contraseña usando 10 rondas. La cuenta recibe rol `clienta` e inicia con cero inasistencias.
 4. El servidor firma un JWT y crea la cookie de sesión. La respuesta excluye `passwordHash`.
-
-### Inicio, persistencia de sesión y permisos
-
-- `POST /api/auth/login` valida el formato, busca la cuenta y compara la contraseña con el hash. Los errores de credenciales usan un mensaje genérico.
-- `jose` firma tokens HS256 con el ID de usuaria en `sub` y el rol en el payload. Expiran en 8 horas y requieren `SESSION_SECRET`.
-- El token viaja en la cookie `bcn_session`, configurada como `HttpOnly`, `SameSite=Lax`, `Path=/` y `Secure` en producción. El endpoint `GET /api/auth/me` permite rehidratar la sesión; `POST /api/auth/logout` elimina la cookie.
-- `src/proxy.ts` protege las páginas `/admin/*` y `/app/*` según el rol. Los endpoints protegidos también verifican sesión y rol en el servidor.
 
 ## API principal
 
@@ -104,15 +106,6 @@ La aplicación está organizada alrededor de Next.js App Router:
    ```
    Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
 
-### Credenciales de Prueba (Seed)
-
-Estas cuentas de demostración se cargan desde `src/data/seed.json`:
-
-| Rol | Correo | Contraseña |
-| --- | --- | --- |
-| **Administradora** | `vante@blackcatnails.sv` | `Password123` |
-| **Clienta** | `camila@mail.com` | `Password123` |
-
 ### Scripts Útiles
 
 ```bash
@@ -132,7 +125,3 @@ npx tsc --noEmit   # Verificación estricta de tipos de TypeScript
 - **Formularios y validación**: React Hook Form y Zod
 - **Sesión y seguridad**: `jose` para JWT y `bcryptjs` para hash de contraseñas
 - **Gráficas y utilidades**: Recharts, date-fns, lucide-react y Sonner
-
-## Persistencia: limitación de esta etapa
-
-Los repositorios de `src/server/db.ts` cargan y clonan `src/data/seed.json` en memoria. No hay una base de datos persistente conectada todavía. En Vercel, cada instancia serverless mantiene su propia memoria y puede reiniciarse; por eso, los cambios hechos durante el uso no son persistentes y el estado vuelve al seed cuando el proceso se reinicia o se despliega una versión nueva. La migración a Cloud Firestore está prevista para la Etapa 3.
